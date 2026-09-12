@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files (contain secrets)
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+!**/.env.example
+
+# Build output
+frontend/dist/
+backend/storage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+backend/storage/logs/
+
+# Cache
+backend/bootstrap/cache/
