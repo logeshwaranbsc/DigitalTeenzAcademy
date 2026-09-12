@@ -228,6 +228,7 @@ export default function UserFormModal({ user, onClose }: UserFormModalProps) {
               >
                 <option value="student">Student</option>
                 <option value="employee">Employee</option>
+                <option value="admin">Administrator</option>
               </select>
             </div>
             <div>

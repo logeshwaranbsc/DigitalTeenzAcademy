@@ -94,7 +94,7 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:profiles,email',
             'password' => 'required|string|min:6|max:255',
             'phone' => 'nullable|string|max:50',
-            'role' => 'required|string|in:student,employee',
+            'role' => 'required|string|in:student,employee,admin',
             'status' => 'sometimes|string|in:active,inactive',
         ]);
 
@@ -189,7 +189,7 @@ class UserController extends Controller
             'last_name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|max:255|unique:profiles,email,' . $id,
             'phone' => 'nullable|string|max:50',
-            'role' => 'sometimes|required|string|in:student,employee',
+            'role' => 'sometimes|required|string|in:student,employee,admin',
             'status' => 'sometimes|required|string|in:active,inactive',
             'password' => 'nullable|string|min:6|max:255',
         ]);

@@ -16,18 +16,40 @@ class SupabaseService
     }
 
     /**
-     * Create a Supabase Auth user (server-side only, uses service role key)
+     * Create a Supabase Auth user (uses service role key if available, falls back to signup API)
      */
     public function createAuthUser(string $email, string $password): array
     {
+        // 1. Try admin endpoint if service role key is available
+        if (!empty($this->serviceRoleKey)) {
+            $response = Http::withoutVerifying()->withHeaders([
+                'apikey' => $this->serviceRoleKey,
+                'Authorization' => 'Bearer ' . $this->serviceRoleKey,
+                'Content-Type' => 'application/json',
+            ])->post(rtrim($this->url, '/') . '/auth/v1/admin/users', [
+                'email' => $email,
+                'password' => $password,
+                'email_confirm' => true,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            $error = $response->json('msg') ?? $response->json('message') ?? $response->json('error_description');
+            if ($error && !str_contains(strtolower($error), 'invalid api key') && !str_contains(strtolower($error), 'unauthorized')) {
+                throw new \Exception($error);
+            }
+        }
+
+        // 2. Fallback to signup endpoint using anon key
+        $anonKey = config('services.supabase.anon_key');
         $response = Http::withoutVerifying()->withHeaders([
-            'apikey' => $this->serviceRoleKey,
-            'Authorization' => 'Bearer ' . $this->serviceRoleKey,
+            'apikey' => $anonKey,
             'Content-Type' => 'application/json',
-        ])->post(rtrim($this->url, '/') . '/auth/v1/admin/users', [
+        ])->post(rtrim($this->url, '/') . '/auth/v1/signup', [
             'email' => $email,
             'password' => $password,
-            'email_confirm' => true,
         ]);
 
         if (!$response->successful()) {
@@ -43,6 +65,11 @@ class SupabaseService
      */
     public function deleteAuthUser(string $authUserId): void
     {
+        if (empty($this->serviceRoleKey)) {
+            logger()->warning("Cannot delete Supabase Auth user {$authUserId}: SUPABASE_SERVICE_ROLE_KEY is not set.");
+            return;
+        }
+
         $response = Http::withoutVerifying()->withHeaders([
             'apikey' => $this->serviceRoleKey,
             'Authorization' => 'Bearer ' . $this->serviceRoleKey,
@@ -59,6 +86,11 @@ class SupabaseService
      */
     public function updateAuthUserEmail(string $authUserId, string $newEmail): void
     {
+        if (empty($this->serviceRoleKey)) {
+            logger()->warning("Cannot update Supabase Auth user email {$authUserId}: SUPABASE_SERVICE_ROLE_KEY is not set.");
+            return;
+        }
+
         $response = Http::withoutVerifying()->withHeaders([
             'apikey' => $this->serviceRoleKey,
             'Authorization' => 'Bearer ' . $this->serviceRoleKey,
@@ -79,6 +111,11 @@ class SupabaseService
      */
     public function updateAuthUserPassword(string $authUserId, string $newPassword): void
     {
+        if (empty($this->serviceRoleKey)) {
+            logger()->warning("Cannot update Supabase Auth user password {$authUserId}: SUPABASE_SERVICE_ROLE_KEY is not set.");
+            return;
+        }
+
         $response = Http::withoutVerifying()->withHeaders([
             'apikey' => $this->serviceRoleKey,
             'Authorization' => 'Bearer ' . $this->serviceRoleKey,

@@ -27,6 +27,9 @@ class SupabaseAuth
         }
 
         try {
+            // Allow 120s leeway to account for clock skew between local machine and Supabase cloud
+            JWT::$leeway = 120;
+
             $jwtSecret = config('services.supabase.jwt_secret');
 
             if ($jwtSecret) {
@@ -44,14 +47,6 @@ class SupabaseAuth
 
                 $keys = JWK::parseKeySet($jwks);
                 $decoded = JWT::decode($token, $keys);
-            }
-
-            // Check token expiration
-            if (isset($decoded->exp) && $decoded->exp < time()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Authentication token has expired.',
-                ], 401);
             }
 
             // Attach the auth user ID to the request
