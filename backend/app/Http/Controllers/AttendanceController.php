@@ -14,6 +14,7 @@ class AttendanceController extends Controller
      * GET /api/attendance/status
      *
      * Returns the currently active check-in for the authenticated user, if any.
+     * Also signals whether the user has already completed their session today.
      * The frontend uses this on page load to restore the live timer.
      */
     public function status(Request $request): JsonResponse
@@ -28,10 +29,15 @@ class AttendanceController extends Controller
             ->latest('check_in_at')
             ->first();
 
+        // Check if any record (active or completed) exists for today
+        $todayRecord = $this->todayRecord($profile->id);
+        $alreadyCompletedToday = !$active && $todayRecord && $todayRecord->status === 'completed';
+
         return response()->json([
-            'success'    => true,
-            'data'       => $active ? $this->formatAttendance($active) : null,
-            'checked_in' => (bool) $active,
+            'success'                 => true,
+            'data'                    => $active ? $this->formatAttendance($active) : null,
+            'checked_in'              => (bool) $active,
+            'already_completed_today' => (bool) $alreadyCompletedToday,
         ]);
     }
 
@@ -39,7 +45,8 @@ class AttendanceController extends Controller
      * POST /api/attendance/check-in
      *
      * Creates a new attendance record for the authenticated user.
-     * Rejects the request if the user already has an active check-in.
+     * Rejects the request if the user already has an active check-in
+     * OR has already completed a session today.
      */
     public function checkIn(Request $request): JsonResponse
     {
@@ -55,6 +62,15 @@ class AttendanceController extends Controller
                 'success' => false,
                 'message' => 'You already have an active check-in. Please check out first.',
                 'data'    => $this->formatAttendance($existing),
+            ], 409);
+        }
+
+        // Prevent a second check-in on the same calendar day
+        $todayRecord = $this->todayRecord($profile->id);
+        if ($todayRecord) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already checked in today. Only one check-in is allowed per day.',
             ], 409);
         }
 
@@ -155,6 +171,18 @@ class AttendanceController extends Controller
         }
 
         return $profile;
+    }
+
+    /**
+     * Return any attendance record (active or completed) for today for a given profile.
+     * Uses the server's local date (DATE() in PostgreSQL).
+     */
+    private function todayRecord(string $profileId): ?Attendance
+    {
+        return Attendance::forProfile($profileId)
+            ->whereDate('check_in_at', today())
+            ->latest('check_in_at')
+            ->first();
     }
 
     /**

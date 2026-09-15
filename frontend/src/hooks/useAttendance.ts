@@ -17,6 +17,8 @@ interface UseAttendanceReturn {
   attendance: Attendance | null;
   /** Whether the user is currently checked in */
   isCheckedIn: boolean;
+  /** True if the user already completed a session today (prevents re-check-in) */
+  alreadyCompletedToday: boolean;
   /** Seconds elapsed since check-in (live, updates every second) */
   elapsedSeconds: number;
   /** True once the user has worked >= 8 hours */
@@ -40,6 +42,7 @@ interface UseAttendanceReturn {
 export function useAttendance(): UseAttendanceReturn {
   const [attendance, setAttendance] = useState<Attendance | null>(null);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [alreadyCompletedToday, setAlreadyCompletedToday] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [loading, setLoading] = useState(true);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -86,7 +89,7 @@ export function useAttendance(): UseAttendanceReturn {
 
     async function init() {
       try {
-        const { checked_in, data } = await getAttendanceStatus();
+        const { checked_in, already_completed_today, data } = await getAttendanceStatus();
 
         if (cancelled) return;
 
@@ -95,6 +98,8 @@ export function useAttendance(): UseAttendanceReturn {
           setIsCheckedIn(true);
           startTimer(data.check_in_at);
         }
+
+        setAlreadyCompletedToday(already_completed_today);
       } catch (err) {
         if (!cancelled) {
           // Non-fatal: user may not be a student/employee (e.g. admin)
@@ -144,6 +149,7 @@ export function useAttendance(): UseAttendanceReturn {
       stopTimer();
       setAttendance(record);
       setIsCheckedIn(false);
+      setAlreadyCompletedToday(true); // lock check-in for the rest of the day
       return record;
     } catch (err: unknown) {
       const msg =
@@ -166,6 +172,7 @@ export function useAttendance(): UseAttendanceReturn {
   return {
     attendance,
     isCheckedIn,
+    alreadyCompletedToday,
     elapsedSeconds,
     is8HoursComplete,
     loading,

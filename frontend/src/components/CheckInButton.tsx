@@ -16,6 +16,7 @@ interface CheckInButtonProps {
 export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
   const {
     isCheckedIn,
+    alreadyCompletedToday,
     elapsedSeconds,
     is8HoursComplete,
     loading,
@@ -125,39 +126,45 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
           )}
         </div>
 
-        {/* Check-Out button */}
+        {/* Check-Out button — enabled only after 8 hours */}
         <button
           id="btn-check-out"
           onClick={handleCheckOut}
-          disabled={checkingOut}
+          disabled={!is8HoursComplete || checkingOut}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
             padding: '6px 14px',
             borderRadius: '10px',
-            border: '1px solid rgba(245,158,11,0.35)',
-            background: checkingOut
+            border: !is8HoursComplete
+              ? '1px solid rgba(148,163,184,0.3)'
+              : '1px solid rgba(245,158,11,0.35)',
+            background: !is8HoursComplete
+              ? 'rgba(148,163,184,0.08)'
+              : checkingOut
               ? 'rgba(245,158,11,0.08)'
               : 'rgba(245,158,11,0.12)',
-            color: '#d97706',
+            color: !is8HoursComplete ? '#94a3b8' : '#d97706',
             fontSize: '13px',
             fontWeight: 600,
-            cursor: checkingOut ? 'not-allowed' : 'pointer',
+            cursor: (!is8HoursComplete || checkingOut) ? 'not-allowed' : 'pointer',
             transition: 'all 0.15s ease',
             outline: 'none',
+            opacity: !is8HoursComplete ? 0.65 : 1,
           }}
           onMouseEnter={(e) => {
-            if (!checkingOut) {
+            if (is8HoursComplete && !checkingOut) {
               (e.currentTarget as HTMLButtonElement).style.background =
                 'rgba(245,158,11,0.2)';
             }
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              'rgba(245,158,11,0.12)';
+            (e.currentTarget as HTMLButtonElement).style.background = !is8HoursComplete
+              ? 'rgba(148,163,184,0.08)'
+              : 'rgba(245,158,11,0.12)';
           }}
-          title="Check Out"
+          title={!is8HoursComplete ? 'Check-out is available after 8 hours of work' : 'Check Out'}
         >
           {checkingOut ? (
             <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
@@ -166,6 +173,34 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
           )}
           <span>{checkingOut ? 'Checking Out…' : 'Check Out'}</span>
         </button>
+      </div>
+    );
+  }
+
+  // ── Already completed today ─────────────────────────────────────────────
+
+  if (alreadyCompletedToday) {
+    return (
+      <div
+        title="You have already checked in and out today"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 14px',
+          borderRadius: '10px',
+          border: '1px solid rgba(16,185,129,0.2)',
+          background: 'rgba(16,185,129,0.06)',
+          color: '#6ee7b7',
+          fontSize: '13px',
+          fontWeight: 600,
+          opacity: 0.75,
+          cursor: 'default',
+          userSelect: 'none',
+        }}
+      >
+        <CheckCircle size={14} style={{ color: '#10b981', flexShrink: 0 }} />
+        <span style={{ color: '#065f46' }}>Done for today</span>
       </div>
     );
   }

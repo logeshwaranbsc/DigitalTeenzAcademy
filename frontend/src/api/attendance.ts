@@ -15,13 +15,15 @@ import type {
  */
 export async function getAttendanceStatus(): Promise<{
   checked_in: boolean;
+  already_completed_today: boolean;
   data: Attendance | null;
 }> {
   const res = await apiClient.get<
-    ApiResponse<Attendance> & { checked_in: boolean }
+    ApiResponse<Attendance> & { checked_in: boolean; already_completed_today: boolean }
   >('/attendance/status');
   return {
     checked_in: res.data.checked_in,
+    already_completed_today: res.data.already_completed_today ?? false,
     data: res.data.data ?? null,
   };
 }
