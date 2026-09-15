@@ -1,11 +1,17 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, LogOut, ClipboardList, Calendar, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import CheckInButton from '../../components/CheckInButton';
+import TimesheetModal from '../../components/TimesheetModal';
+import type { Attendance } from '../../types';
 
 export default function EmployeeDashboard() {
   const { profile, logout } = useAuth();
   const navigate = useNavigate();
+  const [timesheetAttendance, setTimesheetAttendance] = useState<Attendance | null>(null);
+  const [timesheetOpen, setTimesheetOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -15,6 +21,20 @@ export default function EmployeeDashboard() {
     } catch {
       toast.error('Failed to sign out');
     }
+  };
+
+  const handleCheckOut = (attendance: Attendance) => {
+    setTimesheetAttendance(attendance);
+    setTimesheetOpen(true);
+  };
+
+  const handleTimesheetClose = () => {
+    setTimesheetOpen(false);
+  };
+
+  const handleTimesheetSubmitted = () => {
+    setTimesheetOpen(false);
+    setTimesheetAttendance(null);
   };
 
   return (
@@ -42,6 +62,10 @@ export default function EmployeeDashboard() {
                 </span>
               </div>
             )}
+
+            {/* Check-In / Check-Out button */}
+            <CheckInButton onCheckOut={handleCheckOut} />
+
             <button
               onClick={handleLogout}
               className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -79,6 +103,14 @@ export default function EmployeeDashboard() {
           ))}
         </div>
       </main>
+
+      {/* Timesheet Modal */}
+      <TimesheetModal
+        attendance={timesheetAttendance}
+        isOpen={timesheetOpen}
+        onClose={handleTimesheetClose}
+        onSubmitted={handleTimesheetSubmitted}
+      />
     </div>
   );
 }

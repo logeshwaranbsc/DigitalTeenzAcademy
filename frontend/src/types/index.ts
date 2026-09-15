@@ -80,3 +80,47 @@ export interface UserFilters {
   page?: number;
   per_page?: number;
 }
+
+// ─── Attendance / Check-In Types ─────────────────────────────────────────────
+
+export type AttendanceStatus = 'active' | 'completed';
+export type AttendanceUserType = 'student' | 'employee';
+
+export interface Attendance {
+  id: string;
+  profile_id: string;
+  user_type: AttendanceUserType;
+  check_in_at: string;        // ISO 8601 string
+  check_out_at: string | null;
+  total_duration_minutes: number | null;
+  total_duration_human: string | null;
+  status: AttendanceStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Timesheet Types ─────────────────────────────────────────────────────────
+
+export interface TimesheetEntry {
+  id: string;
+  attendance_id: string;
+  profile_id: string;
+  task: string;
+  task_description: string | null;
+  duration_minutes: number;
+  duration_human: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Used in the UI form before submission — no id yet */
+export interface TimesheetFormEntry {
+  /** Temp client-side key for React list rendering */
+  _key: string;
+  task: string;
+  task_description: string;
+  /** Hours portion (0–23) */
+  hours: number;
+  /** Minutes portion (0–59) */
+  minutes: number;
+}

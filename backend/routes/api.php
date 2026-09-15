@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RequireAdmin;
 use App\Http\Middleware\SupabaseAuth;
@@ -21,6 +23,19 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([SupabaseAuth::class])->group(function () {
     // Get authenticated user's profile
     Route::post('/auth/profile', [AuthController::class, 'profile']);
+
+    // ── Attendance / Check-In / Check-Out ────────────────────────────────────
+    Route::prefix('attendance')->group(function () {
+        // Get current check-in status (restores timer on page reload)
+        Route::get('/status', [AttendanceController::class, 'status']);
+        // Check in
+        Route::post('/check-in', [AttendanceController::class, 'checkIn']);
+        // Check out
+        Route::post('/check-out', [AttendanceController::class, 'checkOut']);
+        // Timesheet entries for a session
+        Route::get('/{id}/timesheet', [TimesheetController::class, 'index']);
+        Route::post('/{id}/timesheet', [TimesheetController::class, 'store']);
+    });
 });
 
 // Admin-only routes
