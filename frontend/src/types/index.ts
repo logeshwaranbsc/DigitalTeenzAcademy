@@ -99,6 +99,82 @@ export interface Attendance {
   updated_at: string;
 }
 
+export interface AdminAttendanceRecord extends Attendance {
+  profile?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    full_name?: string;
+    email: string;
+    role: UserRole;
+    avatar_url: string | null;
+  };
+  timesheet_entries?: TimesheetEntry[];
+}
+
+export interface AttendanceFilters {
+  search?: string;
+  profile_id?: string;
+  user_type?: AttendanceUserType | '' | 'all';
+  role?: AttendanceUserType | '' | 'all';
+  date?: string;
+  start_date?: string;
+  end_date?: string;
+  status?: AttendanceStatus | '' | 'all';
+  page?: number;
+  per_page?: number;
+}
+
+export interface AdminAttendanceStats {
+  total_records: number;
+  active_count: number;
+  completed_count: number;
+  total_minutes: number;
+  total_hours_formatted: string;
+}
+
+// ─── Attendance Regularisation Types ──────────────────────────────────────────
+
+export type RegularisationStatus = 'pending' | 'approved' | 'rejected';
+
+export interface AttendanceRegularisation {
+  id: string;
+  attendance_id?: string | null;
+  profile_id: string;
+  date: string;
+  requested_check_in_at: string;
+  requested_check_out_at: string;
+  requested_duration_human?: string;
+  reason: string | null;
+  status: RegularisationStatus;
+  admin_id?: string | null;
+  admin_remarks?: string | null;
+  reviewed_at?: string | null;
+  created_at: string;
+  updated_at?: string;
+  profile?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    full_name?: string;
+    email: string;
+    role: UserRole;
+    avatar_url: string | null;
+  };
+  admin?: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+}
+
+export interface RegularisationFormData {
+  date: string;
+  check_in_time: string;
+  check_out_time: string;
+  reason?: string;
+}
+
 // ─── Timesheet Types ─────────────────────────────────────────────────────────
 
 export interface TimesheetEntry {

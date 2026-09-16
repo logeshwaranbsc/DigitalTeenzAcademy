@@ -12,10 +12,14 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import AdminLayout from './pages/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import UsersPage from './pages/admin/UsersPage';
+import AttendancePage from './pages/admin/AttendancePage';
 
-// Role dashboards
+// Role Layouts & Dashboards
+import StudentLayout from './pages/student/StudentLayout';
 import StudentDashboard from './pages/student/StudentDashboard';
+import EmployeeLayout from './pages/employee/EmployeeLayout';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
+import UserAttendancePage from './pages/common/UserAttendancePage';
 
 export default function App() {
   return (
@@ -27,25 +31,33 @@ export default function App() {
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-          {/* Student routes */}
+          {/* Student routes with Sidebar Layout */}
           <Route
-            path="/student/dashboard"
+            path="/student"
             element={
               <RoleRoute allowedRoles={['student']}>
-                <StudentDashboard />
+                <StudentLayout />
               </RoleRoute>
             }
-          />
+          >
+            <Route index element={<Navigate to="/student/dashboard" replace />} />
+            <Route path="dashboard" element={<StudentDashboard />} />
+            <Route path="attendance" element={<UserAttendancePage />} />
+          </Route>
 
-          {/* Employee routes */}
+          {/* Employee routes with Sidebar Layout */}
           <Route
-            path="/employee/dashboard"
+            path="/employee"
             element={
               <RoleRoute allowedRoles={['employee']}>
-                <EmployeeDashboard />
+                <EmployeeLayout />
               </RoleRoute>
             }
-          />
+          >
+            <Route index element={<Navigate to="/employee/dashboard" replace />} />
+            <Route path="dashboard" element={<EmployeeDashboard />} />
+            <Route path="attendance" element={<UserAttendancePage />} />
+          </Route>
 
           {/* Admin routes */}
           <Route
@@ -59,6 +71,7 @@ export default function App() {
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="attendance" element={<AttendancePage />} />
           </Route>
 
           {/* Catch all */}

@@ -44,6 +44,11 @@ class Attendance extends Model
         return $this->hasMany(TimesheetEntry::class, 'attendance_id');
     }
 
+    public function regularisations(): HasMany
+    {
+        return $this->hasMany(AttendanceRegularisation::class, 'attendance_id');
+    }
+
     // ── Accessors ─────────────────────────────────────────────────────────────
 
     /**

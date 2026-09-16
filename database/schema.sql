@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS attendances (
     check_in_at TIMESTAMPTZ NOT NULL,
     check_out_at TIMESTAMPTZ NULL,
     total_duration_minutes INTEGER NULL CHECK (total_duration_minutes >= 0),
-    status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed')),
+    status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'absent', 'present')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -175,3 +175,58 @@ CREATE POLICY "Users can view own timesheet entries"
             SELECT id FROM profiles WHERE auth_user_id = auth.uid()
         )
     );
+
+-- ==============================================================================
+-- TABLE: attendance_regularisations
+-- Correction / regularisation requests submitted by users for absent sessions
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS attendance_regularisations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    attendance_id UUID NULL REFERENCES attendances(id) ON DELETE SET NULL,
+    profile_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    requested_check_in_at TIMESTAMPTZ NOT NULL,
+    requested_check_out_at TIMESTAMPTZ NOT NULL,
+    reason TEXT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    admin_id UUID NULL REFERENCES profiles(id) ON DELETE SET NULL,
+    admin_remarks TEXT NULL,
+    reviewed_at TIMESTAMPTZ NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_profile_id ON attendance_regularisations(profile_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_status ON attendance_regularisations(status);
+CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_date ON attendance_regularisations(date);
+
+-- Auto-update updated_at
+CREATE OR REPLACE FUNCTION update_attendance_regularisations_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_attendance_regularisations_updated_at ON attendance_regularisations;
+CREATE TRIGGER trigger_attendance_regularisations_updated_at
+    BEFORE UPDATE ON attendance_regularisations
+    FOR EACH ROW
+    EXECUTE FUNCTION update_attendance_regularisations_updated_at();
+
+-- RLS
+ALTER TABLE attendance_regularisations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access on attendance_regularisations"
+    ON attendance_regularisations FOR ALL
+    USING (auth.role() = 'service_role');
+
+CREATE POLICY "Users can view own regularisations"
+    ON attendance_regularisations FOR SELECT
+    USING (
+        profile_id IN (
+            SELECT id FROM profiles WHERE auth_user_id = auth.uid()
+        )
+    );
+

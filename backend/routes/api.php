@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminRegularisationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -35,6 +36,11 @@ Route::middleware([SupabaseAuth::class])->group(function () {
         // Timesheet entries for a session
         Route::get('/{id}/timesheet', [TimesheetController::class, 'index']);
         Route::post('/{id}/timesheet', [TimesheetController::class, 'store']);
+        // User Attendance History
+        Route::get('/my-history', [AttendanceController::class, 'myHistory']);
+        // User Regularisation Requests
+        Route::get('/regularisations', [AttendanceController::class, 'getUserRegularisations']);
+        Route::post('/regularisations', [AttendanceController::class, 'storeRegularisation']);
     });
 });
 
@@ -42,6 +48,14 @@ Route::middleware([SupabaseAuth::class])->group(function () {
 Route::middleware([SupabaseAuth::class, RequireAdmin::class])->group(function () {
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+
+    // Admin Attendance Listing
+    Route::get('/attendance', [AttendanceController::class, 'adminIndex']);
+
+    // Admin Regularisation Requests
+    Route::get('/admin/regularisations', [AdminRegularisationController::class, 'index']);
+    Route::post('/admin/regularisations/{id}/approve', [AdminRegularisationController::class, 'approve']);
+    Route::post('/admin/regularisations/{id}/reject', [AdminRegularisationController::class, 'reject']);
 
     // User Management CRUD
     Route::get('/users', [UserController::class, 'index']);

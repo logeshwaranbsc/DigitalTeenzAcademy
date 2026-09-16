@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
   Users,
+  Clock,
   BookOpen,
   Briefcase,
   Settings,
@@ -18,6 +19,7 @@ import toast from 'react-hot-toast';
 const navItems = [
   { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/admin/users', icon: Users, label: 'User Management' },
+  { to: '/admin/attendance', icon: Clock, label: 'Attendance' },
   { to: '/admin/students', icon: BookOpen, label: 'Students', placeholder: true },
   { to: '/admin/employees', icon: Briefcase, label: 'Employees', placeholder: true },
   { to: '/admin/settings', icon: Settings, label: 'Settings', placeholder: true },

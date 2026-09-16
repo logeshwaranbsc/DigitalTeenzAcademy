@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\AttendanceRegularisation;
 use App\Models\Profile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller
 {
@@ -23,6 +25,9 @@ class AttendanceController extends Controller
         if ($profile instanceof JsonResponse) {
             return $profile;
         }
+
+        // Auto-expire any active check-ins from previous days to 'absent'
+        $this->expireStaleActiveCheckIns($profile->id);
 
         $active = Attendance::forProfile($profile->id)
             ->active()
@@ -54,6 +59,9 @@ class AttendanceController extends Controller
         if ($profile instanceof JsonResponse) {
             return $profile;
         }
+
+        // Auto-expire any active check-ins from previous days to 'absent'
+        $this->expireStaleActiveCheckIns($profile->id);
 
         // Prevent duplicate active check-ins
         $existing = Attendance::forProfile($profile->id)->active()->first();
@@ -138,7 +146,360 @@ class AttendanceController extends Controller
         ]);
     }
 
+    /**
+     * GET /api/admin/attendance
+     *
+     * List all attendance records for admin with user & date filters and summary stats.
+     */
+    public function adminIndex(Request $request): JsonResponse
+    {
+        // Auto-expire active check-ins prior to today
+        $this->expireStaleActiveCheckIns();
+
+        $query = Attendance::with(['profile', 'timesheetEntries']);
+
+        // Filter by user search (name or email)
+        if ($search = $request->input('search')) {
+            $query->whereHas('profile', function ($q) use ($search) {
+                $q->search($search);
+            });
+        }
+
+        // Filter by specific profile ID
+        if ($profileId = $request->input('profile_id')) {
+            $query->where('profile_id', $profileId);
+        }
+
+        // Filter by user type (role)
+        if ($userType = $request->input('user_type') ?? $request->input('role')) {
+            if ($userType !== 'all') {
+                $query->where('user_type', $userType);
+            }
+        }
+
+        // Filter by exact date
+        if ($date = $request->input('date')) {
+            $query->whereDate('check_in_at', $date);
+        }
+
+        // Filter by start_date
+        if ($startDate = $request->input('start_date')) {
+            $query->whereDate('check_in_at', '>=', $startDate);
+        }
+
+        // Filter by end_date
+        if ($endDate = $request->input('end_date')) {
+            $query->whereDate('check_in_at', '<=', $endDate);
+        }
+
+        // Filter by status
+        if ($status = $request->input('status')) {
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+        }
+
+        // Calculate summary statistics on the filtered query
+        $statsQuery = clone $query;
+        $totalRecords = (clone $statsQuery)->count();
+        $activeCount = (clone $statsQuery)->where('status', 'active')->count();
+        $completedCount = (clone $statsQuery)->where('status', 'completed')->count();
+        $totalMinutes = (int) (clone $statsQuery)->where('status', 'completed')->sum('total_duration_minutes');
+
+        $hours = intdiv($totalMinutes, 60);
+        $mins = $totalMinutes % 60;
+        $totalHoursFormatted = sprintf('%dh %dmin', $hours, $mins);
+
+        // Newest check-ins first
+        $query->orderBy('check_in_at', 'desc');
+
+        $perPage = min((int) $request->input('per_page', 15), 100);
+        $attendances = $query->paginate($perPage);
+
+        // Format data
+        $items = collect($attendances->items())->map(function (Attendance $att) {
+            $formatted = $this->formatAttendance($att);
+            if ($att->relationLoaded('profile') && $att->profile) {
+                $formatted['profile'] = [
+                    'id'         => $att->profile->id,
+                    'first_name' => $att->profile->first_name,
+                    'last_name'  => $att->profile->last_name,
+                    'full_name'  => $att->profile->full_name,
+                    'email'      => $att->profile->email,
+                    'role'       => $att->profile->role,
+                    'avatar_url' => $att->profile->avatar_url,
+                ];
+            }
+            if ($att->relationLoaded('timesheetEntries')) {
+                $formatted['timesheet_entries'] = $att->timesheetEntries->map(function ($ts) {
+                    return [
+                        'id'               => $ts->id,
+                        'attendance_id'    => $ts->attendance_id,
+                        'profile_id'       => $ts->profile_id,
+                        'task'             => $ts->task,
+                        'task_description' => $ts->task_description,
+                        'duration_minutes' => $ts->duration_minutes,
+                        'duration_human'   => $ts->duration_human,
+                        'created_at'       => $ts->created_at?->toISOString(),
+                    ];
+                });
+            }
+            return $formatted;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data'    => $items,
+            'stats'   => [
+                'total_records'         => $totalRecords,
+                'active_count'          => $activeCount,
+                'completed_count'       => $completedCount,
+                'total_minutes'         => $totalMinutes,
+                'total_hours_formatted' => $totalHoursFormatted,
+            ],
+            'meta'    => [
+                'current_page' => $attendances->currentPage(),
+                'last_page'    => $attendances->lastPage(),
+                'per_page'     => $attendances->perPage(),
+                'total'        => $attendances->total(),
+                'from'         => $attendances->firstItem(),
+                'to'           => $attendances->lastItem(),
+            ],
+        ]);
+    }
+
+    /**
+     * GET /api/attendance/my-history
+     *
+     * List attendance records for the authenticated user (student/employee).
+     */
+    public function myHistory(Request $request): JsonResponse
+    {
+        $profile = $this->getProfile($request);
+        if ($profile instanceof JsonResponse) {
+            return $profile;
+        }
+
+        // Auto-expire stale active check-ins
+        $this->expireStaleActiveCheckIns($profile->id);
+
+        $query = Attendance::where('profile_id', $profile->id)
+            ->with(['timesheetEntries'])
+            ->orderBy('check_in_at', 'desc');
+
+        // Optional date filters
+        if ($startDate = $request->input('start_date')) {
+            $query->whereDate('check_in_at', '>=', $startDate);
+        }
+        if ($endDate = $request->input('end_date')) {
+            $query->whereDate('check_in_at', '<=', $endDate);
+        }
+        if ($date = $request->input('date')) {
+            $query->whereDate('check_in_at', $date);
+        }
+
+        $perPage = min((int) $request->input('per_page', 15), 100);
+        $attendances = $query->paginate($perPage);
+
+        // Calculate personal statistics
+        $totalRecords = Attendance::where('profile_id', $profile->id)->count();
+        $completedCount = Attendance::where('profile_id', $profile->id)->whereIn('status', ['completed', 'present'])->count();
+        $absentCount = Attendance::where('profile_id', $profile->id)->where('status', 'absent')->count();
+        $totalMinutes = (int) Attendance::where('profile_id', $profile->id)->whereIn('status', ['completed', 'present'])->sum('total_duration_minutes');
+
+        $hours = intdiv($totalMinutes, 60);
+        $mins = $totalMinutes % 60;
+        $totalHoursFormatted = sprintf('%dh %dmin', $hours, $mins);
+
+        $items = collect($attendances->items())->map(function (Attendance $att) {
+            $formatted = $this->formatAttendance($att);
+            if ($att->relationLoaded('timesheetEntries')) {
+                $formatted['timesheet_entries'] = $att->timesheetEntries->map(function ($ts) {
+                    return [
+                        'id'               => $ts->id,
+                        'attendance_id'    => $ts->attendance_id,
+                        'profile_id'       => $ts->profile_id,
+                        'task'             => $ts->task,
+                        'task_description' => $ts->task_description,
+                        'duration_minutes' => $ts->duration_minutes,
+                        'duration_human'   => $ts->duration_human,
+                        'created_at'       => $ts->created_at?->toISOString(),
+                    ];
+                });
+            }
+            return $formatted;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data'    => $items,
+            'stats'   => [
+                'total_records'         => $totalRecords,
+                'completed_count'       => $completedCount,
+                'absent_count'          => $absentCount,
+                'total_minutes'         => $totalMinutes,
+                'total_hours_formatted' => $totalHoursFormatted,
+            ],
+            'meta'    => [
+                'current_page' => $attendances->currentPage(),
+                'last_page'    => $attendances->lastPage(),
+                'per_page'     => $attendances->perPage(),
+                'total'        => $attendances->total(),
+                'from'         => $attendances->firstItem(),
+                'to'           => $attendances->lastItem(),
+            ],
+        ]);
+    }
+
+    /**
+     * GET /api/attendance/regularisations
+     *
+     * List regularisation requests submitted by the authenticated user.
+     */
+    public function getUserRegularisations(Request $request): JsonResponse
+    {
+        $profile = $this->getProfile($request);
+        if ($profile instanceof JsonResponse) {
+            return $profile;
+        }
+
+        $requests = AttendanceRegularisation::where('profile_id', $profile->id)
+            ->with(['admin'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($reg) {
+                return [
+                    'id'                       => $reg->id,
+                    'attendance_id'            => $reg->attendance_id,
+                    'profile_id'               => $reg->profile_id,
+                    'date'                     => $reg->date?->format('Y-m-d'),
+                    'requested_check_in_at'    => $reg->requested_check_in_at?->toISOString(),
+                    'requested_check_out_at'   => $reg->requested_check_out_at?->toISOString(),
+                    'requested_duration_human' => $reg->requested_duration_human,
+                    'reason'                   => $reg->reason,
+                    'status'                   => $reg->status,
+                    'admin_remarks'            => $reg->admin_remarks,
+                    'reviewed_at'              => $reg->reviewed_at?->toISOString(),
+                    'created_at'               => $reg->created_at?->toISOString(),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data'    => $requests,
+        ]);
+    }
+
+    /**
+     * POST /api/attendance/regularisations
+     *
+     * Submit a regularisation request for an absent date.
+     */
+    public function storeRegularisation(Request $request): JsonResponse
+    {
+        $profile = $this->getProfile($request);
+        if ($profile instanceof JsonResponse) {
+            return $profile;
+        }
+
+        $validator = Validator::make($request->all(), [
+            'date'           => 'required|date|before_or_equal:today',
+            'check_in_time'  => 'required|string',
+            'check_out_time' => 'required|string',
+            'reason'         => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error.',
+                'errors'  => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        $dateStr = $request->input('date');
+        $checkInRaw = $request->input('check_in_time');
+        $checkOutRaw = $request->input('check_out_time');
+
+        // Parse datetime strings
+        try {
+            $requestedCheckIn = str_contains($checkInRaw, 'T')
+                ? \Carbon\Carbon::parse($checkInRaw)
+                : \Carbon\Carbon::parse("{$dateStr} {$checkInRaw}");
+
+            $requestedCheckOut = str_contains($checkOutRaw, 'T')
+                ? \Carbon\Carbon::parse($checkOutRaw)
+                : \Carbon\Carbon::parse("{$dateStr} {$checkOutRaw}");
+
+            if ($requestedCheckOut->lte($requestedCheckIn)) {
+                // If check-out is before check-in, assume next day check-out
+                $requestedCheckOut->addDay();
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid check-in or check-out time format.',
+            ], 422);
+        }
+
+        // Prevent duplicate pending request for the same date
+        $existing = AttendanceRegularisation::where('profile_id', $profile->id)
+            ->whereDate('date', $dateStr)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You already have a pending regularisation request for this date.',
+            ], 409);
+        }
+
+        // Check if an attendance record exists for that date (e.g. status = 'absent')
+        $attendance = Attendance::where('profile_id', $profile->id)
+            ->whereDate('check_in_at', $dateStr)
+            ->first();
+
+        $reg = AttendanceRegularisation::create([
+            'attendance_id'          => $attendance?->id,
+            'profile_id'             => $profile->id,
+            'date'                   => $dateStr,
+            'requested_check_in_at'  => $requestedCheckIn,
+            'requested_check_out_at' => $requestedCheckOut,
+            'reason'                 => $request->input('reason'),
+            'status'                 => 'pending',
+        ]);
+
+        Log::info('Regularisation request submitted', [
+            'profile_id' => $profile->id,
+            'date'       => $dateStr,
+            'id'         => $reg->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Regularisation request submitted successfully.',
+            'data'    => $reg,
+        ], 201);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Auto-expire active check-ins whose check_in_at is prior to today.
+     * Marks status = 'absent'.
+     */
+    private function expireStaleActiveCheckIns(?string $profileId = null): void
+    {
+        $query = Attendance::where('status', 'active')
+            ->whereDate('check_in_at', '<', today());
+
+        if ($profileId) {
+            $query->where('profile_id', $profileId);
+        }
+
+        $query->update(['status' => 'absent']);
+    }
 
     /**
      * Resolve the authenticated user's profile from request attributes.

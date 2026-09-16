@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, LogOut, ClipboardList, Calendar, BarChart3 } from 'lucide-react';
+import { Briefcase, LogOut, ClipboardList, Calendar, BarChart3, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import CheckInButton from '../../components/CheckInButton';
 import TimesheetModal from '../../components/TimesheetModal';
+import RegulariseModal from '../../components/RegulariseModal';
 import type { Attendance } from '../../types';
 
 export default function EmployeeDashboard() {
@@ -12,6 +13,7 @@ export default function EmployeeDashboard() {
   const navigate = useNavigate();
   const [timesheetAttendance, setTimesheetAttendance] = useState<Attendance | null>(null);
   const [timesheetOpen, setTimesheetOpen] = useState(false);
+  const [regulariseOpen, setRegulariseOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -63,6 +65,16 @@ export default function EmployeeDashboard() {
               </div>
             )}
 
+            {/* Regularise Attendance button */}
+            <button
+              onClick={() => setRegulariseOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition"
+              title="Regularise Absent Attendance"
+            >
+              <Clock className="w-4 h-4" />
+              <span className="hidden sm:inline">Regularise</span>
+            </button>
+
             {/* Check-In / Check-Out button */}
             <CheckInButton onCheckOut={handleCheckOut} />
 
@@ -110,6 +122,12 @@ export default function EmployeeDashboard() {
         isOpen={timesheetOpen}
         onClose={handleTimesheetClose}
         onSubmitted={handleTimesheetSubmitted}
+      />
+
+      {/* Regularise Attendance Modal */}
+      <RegulariseModal
+        isOpen={regulariseOpen}
+        onClose={() => setRegulariseOpen(false)}
       />
     </div>
   );
