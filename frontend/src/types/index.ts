@@ -83,7 +83,7 @@ export interface UserFilters {
 
 // ─── Attendance / Check-In Types ─────────────────────────────────────────────
 
-export type AttendanceStatus = 'active' | 'completed';
+export type AttendanceStatus = 'active' | 'completed' | 'absent' | 'present';
 export type AttendanceUserType = 'student' | 'employee';
 
 export interface Attendance {
