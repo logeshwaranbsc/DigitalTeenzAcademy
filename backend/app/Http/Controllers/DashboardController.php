@@ -13,12 +13,20 @@ class DashboardController extends Controller
      */
     public function stats(): JsonResponse
     {
+        $data = Profile::selectRaw("
+            COUNT(*) as total_users,
+            COUNT(CASE WHEN role = 'student' THEN 1 END) as total_students,
+            COUNT(CASE WHEN role = 'employee' THEN 1 END) as total_employees,
+            COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users,
+            COUNT(CASE WHEN status = 'inactive' THEN 1 END) as inactive_users
+        ")->first();
+
         $stats = [
-            'total_users' => Profile::count(),
-            'total_students' => Profile::where('role', 'student')->count(),
-            'total_employees' => Profile::where('role', 'employee')->count(),
-            'active_users' => Profile::where('status', 'active')->count(),
-            'inactive_users' => Profile::where('status', 'inactive')->count(),
+            'total_users'     => (int) ($data->total_users ?? 0),
+            'total_students'  => (int) ($data->total_students ?? 0),
+            'total_employees' => (int) ($data->total_employees ?? 0),
+            'active_users'    => (int) ($data->active_users ?? 0),
+            'inactive_users'  => (int) ($data->inactive_users ?? 0),
         ];
 
         return response()->json([

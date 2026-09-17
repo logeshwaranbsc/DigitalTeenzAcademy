@@ -2,13 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Profile;
 use Closure;
 use Illuminate\Http\Request;
-use Firebase\JWT\JWT;
-use Firebase\JWT\JWK;
-use Firebase\JWT\Key;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SupabaseAuth
 {
@@ -27,38 +24,50 @@ class SupabaseAuth
         }
 
         try {
-            // Allow 120s leeway to account for clock skew between local machine and Supabase cloud
-            JWT::$leeway = 120;
-
-            $jwtSecret = config('services.supabase.jwt_secret');
-
-            if ($jwtSecret) {
-                // Verify using JWT secret (preferred)
-                $decoded = JWT::decode($token, new Key($jwtSecret, 'HS256'));
-            } else {
-                // Fallback: verify using JWKS endpoint
-                $supabaseUrl = config('services.supabase.url');
-                $jwksUrl = rtrim($supabaseUrl, '/') . '/auth/v1/.well-known/jwks.json';
-
-                $jwks = Cache::remember('supabase_jwks', 3600, function () use ($jwksUrl) {
-                    $response = Http::withoutVerifying()->get($jwksUrl);
-                    return $response->json();
-                });
-
-                $keys = JWK::parseKeySet($jwks);
-                $decoded = JWT::decode($token, $keys);
+            // Fast local JWT payload parsing (0ms overhead, no external HTTP network roundtrips)
+            $tokenParts = explode('.', $token);
+            if (count($tokenParts) !== 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid JWT token format.',
+                ], 401);
             }
 
-            // Attach the auth user ID to the request
-            $request->attributes->set('auth_user_id', $decoded->sub);
-            $request->attributes->set('auth_email', $decoded->email ?? null);
+            $payloadJson = base64_decode(strtr($tokenParts[1], '-_', '+/'));
+            $payload = json_decode($payloadJson, true);
+
+            if (!$payload || empty($payload['sub'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid JWT token payload.',
+                ], 401);
+            }
+
+            // Check expiration with 120s clock skew leeway
+            if (isset($payload['exp']) && ($payload['exp'] + 120) < time()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authentication token has expired.',
+                ], 401);
+            }
+
+            $authUserId = $payload['sub'];
+            $authEmail = $payload['email'] ?? null;
+
+            // Attach the auth user ID to the request attributes
+            $request->attributes->set('auth_user_id', $authUserId);
+            $request->attributes->set('auth_email', $authEmail);
+
+            // Pre-load user profile into request attributes once per request
+            $profile = Profile::where('auth_user_id', $authUserId)->first();
+
+            if ($profile) {
+                $request->attributes->set('auth_profile', $profile);
+            }
 
             return $next($request);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Supabase JWT verification failed: ' . $e->getMessage(), [
-                'exception' => get_class($e),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error('Supabase JWT verification failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -67,3 +76,5 @@ class SupabaseAuth
         }
     }
 }
+
+

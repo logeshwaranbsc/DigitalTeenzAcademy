@@ -9,10 +9,27 @@ const apiClient = axios.create({
   },
 });
 
-// Automatically attach the Supabase JWT token to every request
+let cachedToken: string | null = null;
+
+// Populate initial token synchronously / once
+supabase.auth.getSession().then(({ data }) => {
+  cachedToken = data.session?.access_token || null;
+});
+
+// Keep cachedToken updated automatically on token refresh, login, or logout
+supabase.auth.onAuthStateChange((_event, session) => {
+  cachedToken = session?.access_token || null;
+});
+
+// Automatically attach the Supabase JWT token to every request from in-memory cache
 apiClient.interceptors.request.use(async (config) => {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
+  let token = cachedToken;
+  if (!token) {
+    // Fallback if not yet loaded in memory
+    const { data } = await supabase.auth.getSession();
+    token = data.session?.access_token || null;
+    cachedToken = token;
+  }
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

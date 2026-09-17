@@ -199,12 +199,18 @@ class AttendanceController extends Controller
             }
         }
 
-        // Calculate summary statistics on the filtered query
-        $statsQuery = clone $query;
-        $totalRecords = (clone $statsQuery)->count();
-        $activeCount = (clone $statsQuery)->where('status', 'active')->count();
-        $completedCount = (clone $statsQuery)->where('status', 'completed')->count();
-        $totalMinutes = (int) (clone $statsQuery)->where('status', 'completed')->sum('total_duration_minutes');
+        // Calculate summary statistics on the filtered query in 1 query
+        $statsData = (clone $query)->reorder()->selectRaw("
+            COUNT(*) as total_records,
+            COUNT(CASE WHEN status = 'active' THEN 1 END) as active_count,
+            COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_count,
+            SUM(CASE WHEN status = 'completed' THEN total_duration_minutes ELSE 0 END) as total_minutes
+        ")->first();
+
+        $totalRecords = (int) ($statsData->total_records ?? 0);
+        $activeCount = (int) ($statsData->active_count ?? 0);
+        $completedCount = (int) ($statsData->completed_count ?? 0);
+        $totalMinutes = (int) ($statsData->total_minutes ?? 0);
 
         $hours = intdiv($totalMinutes, 60);
         $mins = $totalMinutes % 60;
@@ -301,11 +307,18 @@ class AttendanceController extends Controller
         $perPage = min((int) $request->input('per_page', 15), 100);
         $attendances = $query->paginate($perPage);
 
-        // Calculate personal statistics
-        $totalRecords = Attendance::where('profile_id', $profile->id)->count();
-        $completedCount = Attendance::where('profile_id', $profile->id)->whereIn('status', ['completed', 'present'])->count();
-        $absentCount = Attendance::where('profile_id', $profile->id)->where('status', 'absent')->count();
-        $totalMinutes = (int) Attendance::where('profile_id', $profile->id)->whereIn('status', ['completed', 'present'])->sum('total_duration_minutes');
+        // Calculate personal statistics in 1 query
+        $statsData = Attendance::where('profile_id', $profile->id)->selectRaw("
+            COUNT(*) as total_records,
+            COUNT(CASE WHEN status IN ('completed', 'present') THEN 1 END) as completed_count,
+            COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_count,
+            SUM(CASE WHEN status IN ('completed', 'present') THEN total_duration_minutes ELSE 0 END) as total_minutes
+        ")->first();
+
+        $totalRecords = (int) ($statsData->total_records ?? 0);
+        $completedCount = (int) ($statsData->completed_count ?? 0);
+        $absentCount = (int) ($statsData->absent_count ?? 0);
+        $totalMinutes = (int) ($statsData->total_minutes ?? 0);
 
         $hours = intdiv($totalMinutes, 60);
         $mins = $totalMinutes % 60;
@@ -506,16 +519,20 @@ class AttendanceController extends Controller
      */
     private function getProfile(Request $request): Profile|JsonResponse
     {
-        $authUserId = $request->attributes->get('auth_user_id');
+        $profile = $request->attributes->get('auth_profile');
 
-        if (!$authUserId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication required.',
-            ], 401);
+        if (!$profile) {
+            $authUserId = $request->attributes->get('auth_user_id');
+
+            if (!$authUserId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authentication required.',
+                ], 401);
+            }
+
+            $profile = Profile::where('auth_user_id', $authUserId)->first();
         }
-
-        $profile = Profile::where('auth_user_id', $authUserId)->first();
 
         if (!$profile) {
             return response()->json([

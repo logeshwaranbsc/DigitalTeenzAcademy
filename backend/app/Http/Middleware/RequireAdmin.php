@@ -13,16 +13,20 @@ class RequireAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        $authUserId = $request->attributes->get('auth_user_id');
+        $profile = $request->attributes->get('auth_profile');
 
-        if (!$authUserId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication required.',
-            ], 401);
+        if (!$profile) {
+            $authUserId = $request->attributes->get('auth_user_id');
+
+            if (!$authUserId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authentication required.',
+                ], 401);
+            }
+
+            $profile = Profile::where('auth_user_id', $authUserId)->first();
         }
-
-        $profile = Profile::where('auth_user_id', $authUserId)->first();
 
         if (!$profile) {
             return response()->json([
