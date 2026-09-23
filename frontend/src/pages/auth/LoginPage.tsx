@@ -20,7 +20,7 @@ type LoginRole = 'student' | 'employee';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login, isAuthenticated, role } = useAuth();
+  const { login, logout, isAuthenticated, role } = useAuth();
 
   const [selectedRole, setSelectedRole] = useState<LoginRole>('student');
   const [email, setEmail] = useState('');
@@ -29,8 +29,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If already authenticated, redirect
-  if (isAuthenticated && role) {
+  // If already authenticated and not logging in, redirect
+  if (isAuthenticated && role && !isLoading) {
     const destination =
       role === 'admin' ? '/admin/dashboard' :
       role === 'student' ? '/student/dashboard' :
@@ -43,21 +43,26 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
+    const showError = (msg: string) => {
+      setError(msg);
+      toast.error(msg);
+    };
+
     // Frontend validation
     if (!email.trim()) {
-      setError('Email address is required.');
+      showError('Email address is required.');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      showError('Please enter a valid email address.');
       return;
     }
     if (!password) {
-      setError('Password is required.');
+      showError('Password is required.');
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      showError('Password must be at least 6 characters.');
       return;
     }
 
@@ -69,24 +74,28 @@ export default function LoginPage() {
       // 2. Fetch profile from Laravel (verifies role)
       const profile = await getProfile();
 
-      // 3. Verify role match
-      if (profile.status === 'inactive') {
-        setError('Your account has been deactivated. Please contact your administrator.');
+      // 3. Verify status
+      if (profile?.status === 'inactive') {
+        await logout();
+        showError('Your account has been deactivated. Please contact your administrator.');
         return;
       }
 
-      if (profile.role !== selectedRole) {
-        if (profile.role === 'admin') {
-          setError('This account has Administrator privileges. Please click "Sign In as Admin" at the top right.');
+      // 4. Strictly enforce role match for active login tab
+      if (profile?.role !== selectedRole) {
+        await logout();
+        if (profile?.role === 'admin') {
+          showError('This page is for Student/Employee login only. Please click "Sign in As Admin" at top right.');
+        } else if (selectedRole === 'student') {
+          showError('This account is registered as an Employee. Please select the "Employee" tab to sign in.');
         } else {
-          const actualRole = profile.role.charAt(0).toUpperCase() + profile.role.slice(1);
-          setError(`This account is registered as an ${actualRole}. Please select the ${actualRole} tab.`);
+          showError('This account is registered as a Student. Please select the "Student" tab to sign in.');
         }
         return;
       }
 
-      // 4. Redirect to correct dashboard
-      toast.success(`Welcome back, ${profile.first_name}!`);
+      // 5. Redirect to correct dashboard upon valid role match
+      toast.success(`Welcome back, ${profile.first_name || 'User'}!`);
       const destination = selectedRole === 'student' ? '/student/dashboard' : '/employee/dashboard';
       navigate(destination, { replace: true });
     } catch (err: unknown) {
@@ -95,11 +104,11 @@ export default function LoginPage() {
       const message = apiMessage || (err instanceof Error ? err.message : 'Login failed');
 
       if (message.includes('Invalid login credentials')) {
-        setError('Invalid email or password. Please try again.');
+        showError('Invalid email or password. Please try again.');
       } else if (message.includes('Email not confirmed')) {
-        setError('Please verify your email address before signing in.');
+        showError('Please verify your email address before signing in.');
       } else {
-        setError(message);
+        showError(message);
       }
     } finally {
       setIsLoading(false);

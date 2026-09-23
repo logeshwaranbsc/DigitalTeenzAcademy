@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
-  const { login, isAuthenticated, role } = useAuth();
+  const { login, logout, isAuthenticated, role } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,8 +24,8 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If already authenticated as admin, redirect
-  if (isAuthenticated && role === 'admin') {
+  // If already authenticated as admin and not logging in, redirect
+  if (isAuthenticated && role === 'admin' && !isLoading) {
     navigate('/admin/dashboard', { replace: true });
     return null;
   }
@@ -34,20 +34,25 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError('');
 
+    const showError = (msg: string) => {
+      setError(msg);
+      toast.error(msg);
+    };
+
     if (!email.trim()) {
-      setError('Email address is required.');
+      showError('Email address is required.');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      showError('Please enter a valid email address.');
       return;
     }
     if (!password) {
-      setError('Password is required.');
+      showError('Password is required.');
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      showError('Password must be at least 6 characters.');
       return;
     }
 
@@ -56,17 +61,19 @@ export default function AdminLoginPage() {
       await login(email, password);
       const profile = await getProfile();
 
-      if (profile.status === 'inactive') {
-        setError('Your account has been deactivated.');
+      if (profile?.status === 'inactive') {
+        await logout();
+        showError('Your account has been deactivated. Please contact your administrator.');
         return;
       }
 
-      if (profile.role !== 'admin') {
-        setError('This account does not have admin privileges.');
+      if (profile?.role !== 'admin') {
+        await logout();
+        showError('This login page is restricted to Administrators only. Students and Employees must use the main login page.');
         return;
       }
 
-      toast.success(`Welcome back, ${profile.first_name}!`);
+      toast.success(`Welcome back, ${profile.first_name || 'Admin'}!`);
       navigate('/admin/dashboard', { replace: true });
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { message?: string } } };
@@ -74,9 +81,9 @@ export default function AdminLoginPage() {
       const message = apiMessage || (err instanceof Error ? err.message : 'Login failed');
 
       if (message.includes('Invalid login credentials')) {
-        setError('Invalid email or password. Please try again.');
+        showError('Invalid email or password. Please try again.');
       } else {
-        setError(message);
+        showError(message);
       }
     } finally {
       setIsLoading(false);
