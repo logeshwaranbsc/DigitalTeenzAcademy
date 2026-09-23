@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, Calendar, Award, Clock } from 'lucide-react';
+import { BookOpen, Calendar, Award } from 'lucide-react';
 import RegulariseModal from '../../components/RegulariseModal';
 
 export default function StudentDashboard() {

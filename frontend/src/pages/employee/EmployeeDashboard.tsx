@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ClipboardList, Calendar, BarChart3, Clock } from 'lucide-react';
+import { ClipboardList, Calendar, BarChart3 } from 'lucide-react';
 import RegulariseModal from '../../components/RegulariseModal';
 
 export default function EmployeeDashboard() {
