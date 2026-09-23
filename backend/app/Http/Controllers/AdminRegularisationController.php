@@ -121,7 +121,7 @@ class AdminRegularisationController extends Controller
                     'check_in_at'            => $checkInAt,
                     'check_out_at'           => $checkOutAt,
                     'total_duration_minutes' => $duration,
-                    'status'                 => 'completed',
+                    'status'                 => 'regularised',
                 ]);
             } else {
                 $attendance = Attendance::create([
@@ -130,7 +130,7 @@ class AdminRegularisationController extends Controller
                     'check_in_at'            => $checkInAt,
                     'check_out_at'           => $checkOutAt,
                     'total_duration_minutes' => $duration,
-                    'status'                 => 'completed',
+                    'status'                 => 'regularised',
                 ]);
             }
 

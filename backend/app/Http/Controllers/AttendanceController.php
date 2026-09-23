@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\AttendanceRegularisation;
+use App\Models\Holiday;
 use App\Models\Profile;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +19,7 @@ class AttendanceController extends Controller
      * GET /api/attendance/status
      *
      * Returns the currently active check-in for the authenticated user, if any.
-     * Also signals whether the user has already completed their session today.
-     * The frontend uses this on page load to restore the live timer.
+     * Checks if today is a holiday or weekend.
      */
     public function status(Request $request): JsonResponse
     {
@@ -26,23 +28,42 @@ class AttendanceController extends Controller
             return $profile;
         }
 
-        // Auto-expire any active check-ins from previous days to 'absent'
+        // Auto-mark absent for missed past working days & expire stale active check-ins & sync holidays
         $this->expireStaleActiveCheckIns($profile->id);
+        $this->autoMarkAbsentWorkingDays($profile->id);
+        $this->syncHolidayAttendances($profile->id);
 
         $active = Attendance::forProfile($profile->id)
             ->active()
             ->latest('check_in_at')
             ->first();
 
-        // Check if any record (active or completed) exists for today
+        // Check if any record (active or completed/present/regularised) exists for today
         $todayRecord = $this->todayRecord($profile->id);
-        $alreadyCompletedToday = !$active && $todayRecord && $todayRecord->status === 'completed';
+        $alreadyCompletedToday = !$active && $todayRecord && in_array($todayRecord->status, ['completed', 'present', 'regularised'], true);
+
+        // Check if today is a Holiday or Weekend
+        $todayDate = today()->toDateString();
+        $todayHoliday = Holiday::whereDate('date', $todayDate)->first();
+        $isWeekend = today()->isWeekend();
+        $isHoliday = (bool) $todayHoliday;
+
+        $canCheckIn = !$isHoliday && !$isWeekend && !$active && !$alreadyCompletedToday;
 
         return response()->json([
             'success'                 => true,
             'data'                    => $active ? $this->formatAttendance($active) : null,
             'checked_in'              => (bool) $active,
             'already_completed_today' => (bool) $alreadyCompletedToday,
+            'is_holiday'              => $isHoliday,
+            'holiday'                 => $todayHoliday ? [
+                'id'          => $todayHoliday->id,
+                'title'       => $todayHoliday->title,
+                'description' => $todayHoliday->description,
+                'date'        => $todayHoliday->date?->format('Y-m-d'),
+            ] : null,
+            'is_weekend'              => $isWeekend,
+            'can_check_in'            => $canCheckIn,
         ]);
     }
 
@@ -50,8 +71,7 @@ class AttendanceController extends Controller
      * POST /api/attendance/check-in
      *
      * Creates a new attendance record for the authenticated user.
-     * Rejects the request if the user already has an active check-in
-     * OR has already completed a session today.
+     * Rejects request if today is a Holiday or non-working day.
      */
     public function checkIn(Request $request): JsonResponse
     {
@@ -60,7 +80,24 @@ class AttendanceController extends Controller
             return $profile;
         }
 
-        // Auto-expire any active check-ins from previous days to 'absent'
+        // Check holiday / weekend policy
+        $todayDate = today()->toDateString();
+        $todayHoliday = Holiday::whereDate('date', $todayDate)->first();
+        if ($todayHoliday) {
+            return response()->json([
+                'success' => false,
+                'message' => "Check-in disabled: Today is a holiday ({$todayHoliday->title}).",
+            ], 403);
+        }
+
+        if (today()->isWeekend()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Check-in disabled: Today is a weekend (non-working day).',
+            ], 403);
+        }
+
+        // Auto-expire active check-ins from previous days
         $this->expireStaleActiveCheckIns($profile->id);
 
         // Prevent duplicate active check-ins
@@ -106,7 +143,6 @@ class AttendanceController extends Controller
      * POST /api/attendance/check-out
      *
      * Closes the active attendance record, calculates total duration.
-     * Returns 404 if no active check-in exists.
      */
     public function checkOut(Request $request): JsonResponse
     {
@@ -124,8 +160,8 @@ class AttendanceController extends Controller
             ], 404);
         }
 
-        $checkOutAt       = now();
-        $durationMinutes  = (int) $attendance->check_in_at->diffInMinutes($checkOutAt);
+        $checkOutAt      = now();
+        $durationMinutes = (int) $attendance->check_in_at->diffInMinutes($checkOutAt);
 
         $attendance->update([
             'check_out_at'           => $checkOutAt,
@@ -149,23 +185,24 @@ class AttendanceController extends Controller
     /**
      * GET /api/admin/attendance
      *
-     * List all attendance records for admin with user & date filters and summary stats.
+     * List all attendance records for admin with filters and summary stats.
      */
     public function adminIndex(Request $request): JsonResponse
     {
-        // Auto-expire active check-ins prior to today
         $this->expireStaleActiveCheckIns();
+        $this->autoMarkAbsentWorkingDays();
+        $this->syncHolidayAttendances();
 
         $query = Attendance::with(['profile', 'timesheetEntries']);
 
-        // Filter by user search (name or email)
+        // Filter by search (user name/email)
         if ($search = $request->input('search')) {
             $query->whereHas('profile', function ($q) use ($search) {
                 $q->search($search);
             });
         }
 
-        // Filter by specific profile ID
+        // Filter by profile ID
         if ($profileId = $request->input('profile_id')) {
             $query->where('profile_id', $profileId);
         }
@@ -199,30 +236,34 @@ class AttendanceController extends Controller
             }
         }
 
-        // Calculate summary statistics on the filtered query in 1 query
+        // Calculate summary statistics
         $statsData = (clone $query)->reorder()->selectRaw("
             COUNT(*) as total_records,
             COUNT(CASE WHEN status = 'active' THEN 1 END) as active_count,
-            COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_count,
-            SUM(CASE WHEN status = 'completed' THEN total_duration_minutes ELSE 0 END) as total_minutes
+            COUNT(CASE WHEN status IN ('completed', 'present') THEN 1 END) as completed_count,
+            COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_count,
+            COUNT(CASE WHEN status = 'regularised' THEN 1 END) as regularised_count,
+            COUNT(CASE WHEN status = 'holiday' THEN 1 END) as holiday_count,
+            SUM(CASE WHEN status IN ('completed', 'present', 'regularised') THEN total_duration_minutes ELSE 0 END) as total_minutes
         ")->first();
 
-        $totalRecords = (int) ($statsData->total_records ?? 0);
-        $activeCount = (int) ($statsData->active_count ?? 0);
-        $completedCount = (int) ($statsData->completed_count ?? 0);
-        $totalMinutes = (int) ($statsData->total_minutes ?? 0);
+        $totalRecords     = (int) ($statsData->total_records ?? 0);
+        $activeCount      = (int) ($statsData->active_count ?? 0);
+        $completedCount   = (int) ($statsData->completed_count ?? 0);
+        $absentCount      = (int) ($statsData->absent_count ?? 0);
+        $regularisedCount = (int) ($statsData->regularised_count ?? 0);
+        $holidayCount     = (int) ($statsData->holiday_count ?? 0);
+        $totalMinutes     = (int) ($statsData->total_minutes ?? 0);
 
         $hours = intdiv($totalMinutes, 60);
-        $mins = $totalMinutes % 60;
+        $mins  = $totalMinutes % 60;
         $totalHoursFormatted = sprintf('%dh %dmin', $hours, $mins);
 
-        // Newest check-ins first
         $query->orderBy('check_in_at', 'desc');
 
-        $perPage = min((int) $request->input('per_page', 15), 100);
+        $perPage     = min((int) $request->input('per_page', 15), 100);
         $attendances = $query->paginate($perPage);
 
-        // Format data
         $items = collect($attendances->items())->map(function (Attendance $att) {
             $formatted = $this->formatAttendance($att);
             if ($att->relationLoaded('profile') && $att->profile) {
@@ -260,6 +301,9 @@ class AttendanceController extends Controller
                 'total_records'         => $totalRecords,
                 'active_count'          => $activeCount,
                 'completed_count'       => $completedCount,
+                'absent_count'          => $absentCount,
+                'regularised_count'     => $regularisedCount,
+                'holiday_count'         => $holidayCount,
                 'total_minutes'         => $totalMinutes,
                 'total_hours_formatted' => $totalHoursFormatted,
             ],
@@ -286,14 +330,15 @@ class AttendanceController extends Controller
             return $profile;
         }
 
-        // Auto-expire stale active check-ins
+        // Auto-mark absent for missed past working days & expire stale active check-ins & sync holidays
         $this->expireStaleActiveCheckIns($profile->id);
+        $this->autoMarkAbsentWorkingDays($profile->id);
+        $this->syncHolidayAttendances($profile->id);
 
         $query = Attendance::where('profile_id', $profile->id)
             ->with(['timesheetEntries'])
             ->orderBy('check_in_at', 'desc');
 
-        // Optional date filters
         if ($startDate = $request->input('start_date')) {
             $query->whereDate('check_in_at', '>=', $startDate);
         }
@@ -304,24 +349,28 @@ class AttendanceController extends Controller
             $query->whereDate('check_in_at', $date);
         }
 
-        $perPage = min((int) $request->input('per_page', 15), 100);
+        $perPage     = min((int) $request->input('per_page', 15), 100);
         $attendances = $query->paginate($perPage);
 
-        // Calculate personal statistics in 1 query
+        // Calculate personal statistics
         $statsData = Attendance::where('profile_id', $profile->id)->selectRaw("
             COUNT(*) as total_records,
             COUNT(CASE WHEN status IN ('completed', 'present') THEN 1 END) as completed_count,
             COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_count,
-            SUM(CASE WHEN status IN ('completed', 'present') THEN total_duration_minutes ELSE 0 END) as total_minutes
+            COUNT(CASE WHEN status = 'regularised' THEN 1 END) as regularised_count,
+            COUNT(CASE WHEN status = 'holiday' THEN 1 END) as holiday_count,
+            SUM(CASE WHEN status IN ('completed', 'present', 'regularised') THEN total_duration_minutes ELSE 0 END) as total_minutes
         ")->first();
 
-        $totalRecords = (int) ($statsData->total_records ?? 0);
-        $completedCount = (int) ($statsData->completed_count ?? 0);
-        $absentCount = (int) ($statsData->absent_count ?? 0);
-        $totalMinutes = (int) ($statsData->total_minutes ?? 0);
+        $totalRecords     = (int) ($statsData->total_records ?? 0);
+        $completedCount   = (int) ($statsData->completed_count ?? 0);
+        $absentCount      = (int) ($statsData->absent_count ?? 0);
+        $regularisedCount = (int) ($statsData->regularised_count ?? 0);
+        $holidayCount     = (int) ($statsData->holiday_count ?? 0);
+        $totalMinutes     = (int) ($statsData->total_minutes ?? 0);
 
         $hours = intdiv($totalMinutes, 60);
-        $mins = $totalMinutes % 60;
+        $mins  = $totalMinutes % 60;
         $totalHoursFormatted = sprintf('%dh %dmin', $hours, $mins);
 
         $items = collect($attendances->items())->map(function (Attendance $att) {
@@ -350,6 +399,8 @@ class AttendanceController extends Controller
                 'total_records'         => $totalRecords,
                 'completed_count'       => $completedCount,
                 'absent_count'          => $absentCount,
+                'regularised_count'     => $regularisedCount,
+                'holiday_count'         => $holidayCount,
                 'total_minutes'         => $totalMinutes,
                 'total_hours_formatted' => $totalHoursFormatted,
             ],
@@ -430,22 +481,20 @@ class AttendanceController extends Controller
             ], 422);
         }
 
-        $dateStr = $request->input('date');
-        $checkInRaw = $request->input('check_in_time');
+        $dateStr     = $request->input('date');
+        $checkInRaw  = $request->input('check_in_time');
         $checkOutRaw = $request->input('check_out_time');
 
-        // Parse datetime strings
         try {
             $requestedCheckIn = str_contains($checkInRaw, 'T')
-                ? \Carbon\Carbon::parse($checkInRaw)
-                : \Carbon\Carbon::parse("{$dateStr} {$checkInRaw}");
+                ? Carbon::parse($checkInRaw)
+                : Carbon::parse("{$dateStr} {$checkInRaw}");
 
             $requestedCheckOut = str_contains($checkOutRaw, 'T')
-                ? \Carbon\Carbon::parse($checkOutRaw)
-                : \Carbon\Carbon::parse("{$dateStr} {$checkOutRaw}");
+                ? Carbon::parse($checkOutRaw)
+                : Carbon::parse("{$dateStr} {$checkOutRaw}");
 
             if ($requestedCheckOut->lte($requestedCheckIn)) {
-                // If check-out is before check-in, assume next day check-out
                 $requestedCheckOut->addDay();
             }
         } catch (\Exception $e) {
@@ -468,7 +517,7 @@ class AttendanceController extends Controller
             ], 409);
         }
 
-        // Check if an attendance record exists for that date (e.g. status = 'absent')
+        // Check if an attendance record exists for that date
         $attendance = Attendance::where('profile_id', $profile->id)
             ->whereDate('check_in_at', $dateStr)
             ->first();
@@ -497,6 +546,102 @@ class AttendanceController extends Controller
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Auto-mark absent for active profiles for past working days where no check-in exists.
+     * Skips weekends and holidays.
+     */
+    private function autoMarkAbsentWorkingDays(?string $profileId = null): void
+    {
+        $endDate   = today()->subDay(); // Up to yesterday
+        $startDate = today()->subDays(30);
+
+        if ($startDate->gt($endDate)) {
+            return;
+        }
+
+        $profilesQuery = Profile::where('status', 'active')->whereIn('role', ['student', 'employee']);
+        if ($profileId) {
+            $profilesQuery->where('id', $profileId);
+        }
+        $profiles = $profilesQuery->get();
+
+        if ($profiles->isEmpty()) {
+            return;
+        }
+
+        // Get holiday dates in range
+        $holidayDates = Holiday::betweenDates($startDate->toDateString(), $endDate->toDateString())
+            ->pluck('date')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->toArray();
+
+        foreach ($profiles as $profile) {
+            $profileStart = $profile->created_at ? $profile->created_at->startOfDay() : $startDate;
+            $effectiveStart = $profileStart->gt($startDate) ? $profileStart : $startDate;
+
+            if ($effectiveStart->gt($endDate)) {
+                continue;
+            }
+
+            $period = CarbonPeriod::create($effectiveStart, $endDate);
+
+            foreach ($period as $date) {
+                if ($date->isWeekend()) {
+                    continue;
+                }
+
+                $dateStr = $date->toDateString();
+
+                if (in_array($dateStr, $holidayDates, true)) {
+                    continue;
+                }
+
+                $exists = Attendance::where('profile_id', $profile->id)
+                    ->whereDate('check_in_at', $dateStr)
+                    ->exists();
+
+                if (!$exists) {
+                    Attendance::create([
+                        'profile_id'  => $profile->id,
+                        'user_type'   => $profile->role,
+                        'check_in_at' => $date->copy()->setTime(9, 0, 0),
+                        'status'      => 'absent',
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Synchronize existing attendance records on configured holiday dates.
+     * Updates status from 'absent' or 'active' to 'holiday'.
+     */
+    private function syncHolidayAttendances(?string $profileId = null): void
+    {
+        try {
+            $holidayDates = Holiday::pluck('date')->map(fn($d) => $d->format('Y-m-d'))->toArray();
+
+            if (empty($holidayDates)) {
+                return;
+            }
+
+            foreach ($holidayDates as $hDate) {
+                $query = Attendance::whereDate('check_in_at', $hDate)
+                    ->whereIn('status', ['absent', 'active']);
+
+                if ($profileId) {
+                    $query->where('profile_id', $profileId);
+                }
+
+                $query->update(['status' => 'holiday']);
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::warning('Holiday attendance sync pending database constraint update in Supabase SQL editor.', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 
     /**
      * Auto-expire active check-ins whose check_in_at is prior to today.
@@ -552,8 +697,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Return any attendance record (active or completed) for today for a given profile.
-     * Uses the server's local date (DATE() in PostgreSQL).
+     * Return any attendance record for today for a given profile.
      */
     private function todayRecord(string $profileId): ?Attendance
     {

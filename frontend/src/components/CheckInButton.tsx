@@ -17,6 +17,9 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
   const {
     isCheckedIn,
     alreadyCompletedToday,
+    isHoliday,
+    holidayInfo,
+    isWeekend,
     elapsedSeconds,
     is8HoursComplete,
     loading,
@@ -153,17 +156,6 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
             outline: 'none',
             opacity: !is8HoursComplete ? 0.65 : 1,
           }}
-          onMouseEnter={(e) => {
-            if (is8HoursComplete && !checkingOut) {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                'rgba(245,158,11,0.2)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = !is8HoursComplete
-              ? 'rgba(148,163,184,0.08)'
-              : 'rgba(245,158,11,0.12)';
-          }}
           title={!is8HoursComplete ? 'Check-out is available after 8 hours of work' : 'Check Out'}
         >
           {checkingOut ? (
@@ -173,6 +165,60 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
           )}
           <span>{checkingOut ? 'Checking Out…' : 'Check Out'}</span>
         </button>
+      </div>
+    );
+  }
+
+  // ── Holiday state ──────────────────────────────────────────────────────────
+
+  if (isHoliday) {
+    return (
+      <div
+        title={holidayInfo?.description || 'Today is an organization holiday'}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 14px',
+          borderRadius: '10px',
+          border: '1px solid rgba(99,102,241,0.3)',
+          background: 'rgba(99,102,241,0.1)',
+          color: '#4f46e5',
+          fontSize: '13px',
+          fontWeight: 600,
+          cursor: 'default',
+          userSelect: 'none',
+        }}
+      >
+        <Clock size={14} style={{ color: '#6366f1', flexShrink: 0 }} />
+        <span>Holiday: {holidayInfo?.title || 'Organization Holiday'}</span>
+      </div>
+    );
+  }
+
+  // ── Non-working day (Weekend) state ────────────────────────────────────────
+
+  if (isWeekend) {
+    return (
+      <div
+        title="Check-in is not active on weekends"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 14px',
+          borderRadius: '10px',
+          border: '1px solid rgba(148,163,184,0.3)',
+          background: 'rgba(148,163,184,0.1)',
+          color: '#64748b',
+          fontSize: '13px',
+          fontWeight: 600,
+          cursor: 'default',
+          userSelect: 'none',
+        }}
+      >
+        <Clock size={14} style={{ color: '#94a3b8', flexShrink: 0 }} />
+        <span>Weekend (Non-Working Day)</span>
       </div>
     );
   }
@@ -191,16 +237,16 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
           borderRadius: '10px',
           border: '1px solid rgba(16,185,129,0.2)',
           background: 'rgba(16,185,129,0.06)',
-          color: '#6ee7b7',
+          color: '#059669',
           fontSize: '13px',
           fontWeight: 600,
-          opacity: 0.75,
+          opacity: 0.85,
           cursor: 'default',
           userSelect: 'none',
         }}
       >
         <CheckCircle size={14} style={{ color: '#10b981', flexShrink: 0 }} />
-        <span style={{ color: '#065f46' }}>Done for today</span>
+        <span style={{ color: '#047857' }}>Done for today</span>
       </div>
     );
   }

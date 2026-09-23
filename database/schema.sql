@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS attendances (
     check_in_at TIMESTAMPTZ NOT NULL,
     check_out_at TIMESTAMPTZ NULL,
     total_duration_minutes INTEGER NULL CHECK (total_duration_minutes >= 0),
-    status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'absent', 'present')),
+    status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'present', 'absent', 'holiday', 'regularised')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -229,4 +229,48 @@ CREATE POLICY "Users can view own regularisations"
             SELECT id FROM profiles WHERE auth_user_id = auth.uid()
         )
     );
+
+-- ==============================================================================
+-- TABLE: holidays
+-- Organization holiday calendar created by admins
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS holidays (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    date DATE NOT NULL UNIQUE,
+    is_recurring BOOLEAN NOT NULL DEFAULT FALSE,
+    created_by UUID NULL REFERENCES profiles(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_holidays_date ON holidays(date);
+
+-- Auto-update updated_at
+CREATE OR REPLACE FUNCTION update_holidays_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_holidays_updated_at ON holidays;
+CREATE TRIGGER trigger_holidays_updated_at
+    BEFORE UPDATE ON holidays
+    FOR EACH ROW
+    EXECUTE FUNCTION update_holidays_updated_at();
+
+-- RLS
+ALTER TABLE holidays ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access on holidays"
+    ON holidays FOR ALL
+    USING (auth.role() = 'service_role');
+
+CREATE POLICY "Authenticated users can view holidays"
+    ON holidays FOR SELECT
+    USING (auth.role() = 'authenticated');
+
 

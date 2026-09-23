@@ -19,6 +19,14 @@ interface UseAttendanceReturn {
   isCheckedIn: boolean;
   /** True if the user already completed a session today (prevents re-check-in) */
   alreadyCompletedToday: boolean;
+  /** True if today is an admin-configured holiday */
+  isHoliday: boolean;
+  /** Holiday details if today is a holiday */
+  holidayInfo: { id: string; title: string; description: string | null; date: string } | null;
+  /** True if today is a weekend */
+  isWeekend: boolean;
+  /** True if check-in is allowed today */
+  canCheckIn: boolean;
   /** Seconds elapsed since check-in (live, updates every second) */
   elapsedSeconds: number;
   /** True once the user has worked >= 8 hours */
@@ -43,6 +51,10 @@ export function useAttendance(): UseAttendanceReturn {
   const [attendance, setAttendance] = useState<Attendance | null>(null);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [alreadyCompletedToday, setAlreadyCompletedToday] = useState(false);
+  const [isHoliday, setIsHoliday] = useState(false);
+  const [holidayInfo, setHolidayInfo] = useState<{ id: string; title: string; description: string | null; date: string } | null>(null);
+  const [isWeekend, setIsWeekend] = useState(false);
+  const [canCheckIn, setCanCheckIn] = useState(true);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [loading, setLoading] = useState(true);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -61,10 +73,8 @@ export function useAttendance(): UseAttendanceReturn {
 
   const startTimer = useCallback(
     (checkInAt: string) => {
-      // Immediately set current elapsed
       setElapsedSeconds(getElapsed(checkInAt));
 
-      // Clear any existing timer
       if (timerRef.current) clearInterval(timerRef.current);
 
       timerRef.current = setInterval(() => {
@@ -89,20 +99,23 @@ export function useAttendance(): UseAttendanceReturn {
 
     async function init() {
       try {
-        const { checked_in, already_completed_today, data } = await getAttendanceStatus();
+        const res = await getAttendanceStatus();
 
         if (cancelled) return;
 
-        if (checked_in && data) {
-          setAttendance(data);
+        if (res.checked_in && res.data) {
+          setAttendance(res.data);
           setIsCheckedIn(true);
-          startTimer(data.check_in_at);
+          startTimer(res.data.check_in_at);
         }
 
-        setAlreadyCompletedToday(already_completed_today);
+        setAlreadyCompletedToday(res.already_completed_today);
+        setIsHoliday(Boolean(res.is_holiday));
+        setHolidayInfo(res.holiday || null);
+        setIsWeekend(Boolean(res.is_weekend));
+        setCanCheckIn(res.can_check_in ?? true);
       } catch (err) {
         if (!cancelled) {
-          // Non-fatal: user may not be a student/employee (e.g. admin)
           console.warn('Attendance status check failed:', err);
         }
       } finally {
@@ -149,7 +162,7 @@ export function useAttendance(): UseAttendanceReturn {
       stopTimer();
       setAttendance(record);
       setIsCheckedIn(false);
-      setAlreadyCompletedToday(true); // lock check-in for the rest of the day
+      setAlreadyCompletedToday(true);
       return record;
     } catch (err: unknown) {
       const msg =
@@ -173,6 +186,10 @@ export function useAttendance(): UseAttendanceReturn {
     attendance,
     isCheckedIn,
     alreadyCompletedToday,
+    isHoliday,
+    holidayInfo,
+    isWeekend,
+    canCheckIn,
     elapsedSeconds,
     is8HoursComplete,
     loading,

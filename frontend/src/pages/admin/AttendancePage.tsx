@@ -5,16 +5,24 @@ import {
   approveRegularisation,
   rejectRegularisation,
 } from '../../api/attendance';
+import {
+  getHolidays,
+  createHoliday,
+  updateHoliday,
+  deleteHoliday,
+} from '../../api/holidays';
 import { getUsers } from '../../api/users';
 import type {
   AdminAttendanceRecord,
   AdminAttendanceStats,
   AttendanceFilters,
   AttendanceRegularisation,
+  Holiday,
+  HolidayFormData,
   PaginationMeta,
   Profile,
-  TimesheetEntry,
 } from '../../types';
+import HolidayModal from '../../components/HolidayModal';
 import {
   Clock,
   Search,
@@ -35,13 +43,16 @@ import {
   Briefcase,
   FileText,
   AlertCircle,
+  Plus,
+  Edit2,
+  Trash2,
   Check,
-  MessageSquare,
+  Sun,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AttendancePage() {
-  const [activeTab, setActiveTab] = useState<'attendance' | 'regularisations'>('attendance');
+  const [activeTab, setActiveTab] = useState<'attendance' | 'regularisations' | 'holidays'>('attendance');
 
   // Attendance Records State
   const [records, setRecords] = useState<AdminAttendanceRecord[]>([]);
@@ -49,6 +60,9 @@ export default function AttendancePage() {
     total_records: 0,
     active_count: 0,
     completed_count: 0,
+    absent_count: 0,
+    regularised_count: 0,
+    holiday_count: 0,
     total_minutes: 0,
     total_hours_formatted: '0h 0min',
   });
@@ -89,6 +103,13 @@ export default function AttendancePage() {
   const [rejectModalItem, setRejectModalItem] = useState<AttendanceRegularisation | null>(null);
   const [rejectRemarks, setRejectRemarks] = useState('');
   const [rejecting, setRejecting] = useState(false);
+
+  // Holiday Management State
+  const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const [loadingHolidays, setLoadingHolidays] = useState(false);
+  const [holidayModalOpen, setHolidayModalOpen] = useState(false);
+  const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
+  const [savingHoliday, setSavingHoliday] = useState(false);
 
   // Load available users for filter dropdown
   useEffect(() => {
@@ -131,20 +152,35 @@ export default function AttendancePage() {
     }
   }, [regStatusFilter]);
 
+  // Fetch organization holidays
+  const fetchHolidays = useCallback(async () => {
+    setLoadingHolidays(true);
+    try {
+      const data = await getHolidays();
+      setHolidays(data);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load holidays');
+    } finally {
+      setLoadingHolidays(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeTab === 'attendance') {
       fetchAttendance();
-    } else {
+    } else if (activeTab === 'regularisations') {
       fetchRegularisations();
+    } else if (activeTab === 'holidays') {
+      fetchHolidays();
     }
-  }, [activeTab, fetchAttendance, fetchRegularisations]);
+  }, [activeTab, fetchAttendance, fetchRegularisations, fetchHolidays]);
 
-  // Handle Approve
+  // Handle Approve Regularisation
   const handleApprove = async (id: string) => {
     setProcessingId(id);
     try {
       await approveRegularisation(id);
-      toast.success('Regularisation request approved! Attendance marked as Present.');
+      toast.success('Regularisation request approved! Attendance marked as Regularised.');
       fetchRegularisations();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to approve request');
@@ -169,6 +205,39 @@ export default function AttendancePage() {
       toast.error(err instanceof Error ? err.message : 'Failed to reject request');
     } finally {
       setRejecting(false);
+    }
+  };
+
+  // Handle Save Holiday (Create or Update)
+  const handleSaveHoliday = async (data: HolidayFormData) => {
+    setSavingHoliday(true);
+    try {
+      if (editingHoliday) {
+        await updateHoliday(editingHoliday.id, data);
+        toast.success('Holiday updated successfully!');
+      } else {
+        await createHoliday(data);
+        toast.success('Holiday created successfully!');
+      }
+      setHolidayModalOpen(false);
+      setEditingHoliday(null);
+      fetchHolidays();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save holiday');
+    } finally {
+      setSavingHoliday(false);
+    }
+  };
+
+  // Handle Delete Holiday
+  const handleDeleteHoliday = async (id: string, title: string) => {
+    if (!window.confirm(`Are you sure you want to delete holiday "${title}"?`)) return;
+    try {
+      await deleteHoliday(id);
+      toast.success(`Holiday "${title}" deleted.`);
+      fetchHolidays();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete holiday');
     }
   };
 
@@ -286,26 +355,49 @@ export default function AttendancePage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
-      {/* Header Title & Nav Tabs */}
+      {/* Header Title & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
             <Clock className="w-7 h-7 text-indigo-600" />
-            Attendance Management
+            Attendance & Holiday Management
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Track, filter, and manage check-in sessions, timesheets, and regularisation requests
+            Track check-ins, manage regularisation requests, and configure organization holidays
           </p>
         </div>
 
-        <button
-          onClick={activeTab === 'attendance' ? fetchAttendance : fetchRegularisations}
-          disabled={loading || loadingRegs}
-          className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-xl transition shadow-sm self-start sm:self-auto"
-        >
-          <RotateCcw className={`w-4 h-4 ${loading || loadingRegs ? 'animate-spin text-indigo-600' : ''}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          {activeTab === 'holidays' && (
+            <button
+              onClick={() => {
+                setEditingHoliday(null);
+                setHolidayModalOpen(true);
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition"
+            >
+              <Plus className="w-4 h-4" />
+              Add Holiday
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              if (activeTab === 'attendance') fetchAttendance();
+              else if (activeTab === 'regularisations') fetchRegularisations();
+              else fetchHolidays();
+            }}
+            disabled={loading || loadingRegs || loadingHolidays}
+            className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-xl transition shadow-sm"
+          >
+            <RotateCcw
+              className={`w-4 h-4 ${
+                loading || loadingRegs || loadingHolidays ? 'animate-spin text-indigo-600' : ''
+              }`}
+            />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Main Tabs */}
@@ -321,6 +413,7 @@ export default function AttendancePage() {
           <Clock className="w-4 h-4" />
           Attendance Records
         </button>
+
         <button
           onClick={() => setActiveTab('regularisations')}
           className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition relative ${
@@ -332,24 +425,37 @@ export default function AttendancePage() {
           <AlertCircle className="w-4 h-4" />
           Regularisation Requests
           {pendingCount > 0 && (
-            <span className="px-2 py-0.5 text-xs bg-amber-500 text-white font-bold rounded-full">
+            <span className="px-2 py-0.5 text-xs bg-amber-500 text-white font-bold rounded-full ml-1">
               {pendingCount}
             </span>
           )}
         </button>
+
+        <button
+          onClick={() => setActiveTab('holidays')}
+          className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${
+            activeTab === 'holidays'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          <Sun className="w-4 h-4" />
+          Organization Holidays
+        </button>
       </div>
 
-      {activeTab === 'attendance' ? (
+      {/* Tab 1: Attendance Records */}
+      {activeTab === 'attendance' && (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Records</p>
                 <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_records}</p>
               </div>
-              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-                <FileText className="w-6 h-6" />
+              <div className="w-11 h-11 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                <FileText className="w-5 h-5" />
               </div>
             </div>
 
@@ -364,28 +470,38 @@ export default function AttendancePage() {
                 </p>
                 <p className="text-2xl font-bold text-slate-800 mt-1">{stats.active_count}</p>
               </div>
-              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-                <UserCheck className="w-6 h-6" />
+              <div className="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                <UserCheck className="w-5 h-5" />
               </div>
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Completed Sessions</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{stats.completed_count}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Present Days</p>
+                <p className="text-2xl font-bold text-purple-600 mt-1">{stats.completed_count}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="w-11 h-11 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours Worked</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_hours_formatted}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Absent Days</p>
+                <p className="text-2xl font-bold text-red-600 mt-1">{stats.absent_count}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6" />
+              <div className="w-11 h-11 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
+                <XCircle className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Regularised</p>
+                <p className="text-2xl font-bold text-teal-600 mt-1">{stats.regularised_count}</p>
+              </div>
+              <div className="w-11 h-11 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
+                <Clock className="w-5 h-5" />
               </div>
             </div>
           </div>
@@ -464,8 +580,10 @@ export default function AttendancePage() {
                 >
                   <option value="all">All Statuses</option>
                   <option value="active">Active (Checked In)</option>
-                  <option value="completed">Completed (Checked Out)</option>
-                  <option value="absent">Absent (Auto-Expired)</option>
+                  <option value="completed">Present / Completed</option>
+                  <option value="absent">Absent</option>
+                  <option value="regularised">Regularised</option>
+                  <option value="holiday">Holiday</option>
                 </select>
               </div>
             </div>
@@ -589,7 +707,6 @@ export default function AttendancePage() {
                       const name = profile ? `${profile.first_name} ${profile.last_name}` : 'Unknown User';
                       const initials = profile ? `${profile.first_name[0]}${profile.last_name[0]}` : 'U';
                       const role = rec.user_type || profile?.role || 'student';
-
                       const timesheetCount = rec.timesheet_entries?.length || 0;
 
                       return (
@@ -628,7 +745,9 @@ export default function AttendancePage() {
                             {rec.check_out_at ? (
                               formatDateTime(rec.check_out_at)
                             ) : rec.status === 'absent' ? (
-                              <span className="text-red-500 text-xs font-semibold">Unclosed (Absent)</span>
+                              <span className="text-red-500 text-xs font-semibold">No Check-In (Absent)</span>
+                            ) : rec.status === 'holiday' ? (
+                              <span className="text-indigo-600 text-xs font-semibold">Holiday</span>
                             ) : (
                               <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1">
                                 <span className="relative flex h-2 w-2">
@@ -647,17 +766,27 @@ export default function AttendancePage() {
                           <td className="py-4 px-4 whitespace-nowrap">
                             {rec.status === 'active' && (
                               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Active
+                                Active Now
                               </span>
                             )}
-                            {rec.status === 'completed' && (
+                            {(rec.status === 'completed' || rec.status === 'present') && (
                               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-                                Completed / Present
+                                Present
                               </span>
                             )}
                             {rec.status === 'absent' && (
                               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
                                 Absent
+                              </span>
+                            )}
+                            {rec.status === 'regularised' && (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
+                                Regularised
+                              </span>
+                            )}
+                            {rec.status === 'holiday' && (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                Holiday
                               </span>
                             )}
                           </td>
@@ -712,8 +841,10 @@ export default function AttendancePage() {
             )}
           </div>
         </>
-      ) : (
-        /* Regularisations Management View */
+      )}
+
+      {/* Tab 2: Regularisation Requests */}
+      {activeTab === 'regularisations' && (
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -798,22 +929,22 @@ export default function AttendancePage() {
                           </td>
 
                           <td className="py-4 px-4 max-w-xs truncate text-slate-600 text-xs italic">
-                            {reg.reason ? `"${reg.reason}"` : '—'}
+                            "{reg.reason || 'No reason provided'}"
                           </td>
 
                           <td className="py-4 px-4 whitespace-nowrap">
                             {reg.status === 'pending' && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                                 Pending
                               </span>
                             )}
                             {reg.status === 'approved' && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                 Approved
                               </span>
                             )}
                             {reg.status === 'rejected' && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
                                 Rejected
                               </span>
                             )}
@@ -823,9 +954,9 @@ export default function AttendancePage() {
                             {reg.status === 'pending' ? (
                               <div className="flex items-center justify-end gap-2">
                                 <button
-                                  disabled={processingId === reg.id}
                                   onClick={() => handleApprove(reg.id)}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm disabled:opacity-50"
+                                  disabled={processingId === reg.id}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition disabled:opacity-50"
                                 >
                                   {processingId === reg.id ? (
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -835,19 +966,18 @@ export default function AttendancePage() {
                                   Approve
                                 </button>
                                 <button
+                                  onClick={() => setRejectModalItem(reg)}
                                   disabled={processingId === reg.id}
-                                  onClick={() => {
-                                    setRejectModalItem(reg);
-                                    setRejectRemarks('');
-                                  }}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-xl transition"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-xs font-semibold transition disabled:opacity-50"
                                 >
                                   <X className="w-3.5 h-3.5" />
                                   Reject
                                 </button>
                               </div>
                             ) : (
-                              <span className="text-xs text-slate-400 italic">Reviewed</span>
+                              <span className="text-xs text-slate-400 font-medium">
+                                Reviewed on {reg.reviewed_at ? reg.reviewed_at.split('T')[0] : '—'}
+                              </span>
                             )}
                           </td>
                         </tr>
@@ -861,7 +991,117 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {/* Timesheet Detail Modal */}
+      {/* Tab 3: Holiday Management */}
+      {activeTab === 'holidays' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                  <Sun className="w-5 h-5 text-indigo-600" />
+                  Organization Calendar Holidays
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Configure official holidays to prevent auto-absent status and block check-in
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setEditingHoliday(null);
+                  setHolidayModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition"
+              >
+                <Plus className="w-4 h-4" />
+                Add Holiday
+              </button>
+            </div>
+
+            {loadingHolidays ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-3">
+                <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+                <p className="text-sm text-slate-500 font-medium">Loading organization holidays...</p>
+              </div>
+            ) : holidays.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <Sun className="w-12 h-12 text-amber-400 mb-2" />
+                <h3 className="text-base font-semibold text-slate-800">No holidays configured</h3>
+                <p className="text-sm text-slate-500 max-w-md mt-1">
+                  Click "Add Holiday" above to add official organization holidays to the calendar.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[12px] uppercase font-bold tracking-wider text-slate-500">
+                      <th className="py-3.5 px-5">Holiday Title</th>
+                      <th className="py-3.5 px-4">Date</th>
+                      <th className="py-3.5 px-4">Recurring</th>
+                      <th className="py-3.5 px-4">Description</th>
+                      <th className="py-3.5 px-5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-sm">
+                    {holidays.map((h) => (
+                      <tr key={h.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-4 px-5 font-bold text-slate-800">
+                          {h.title}
+                        </td>
+
+                        <td className="py-4 px-4 whitespace-nowrap font-semibold text-indigo-600">
+                          {h.date}
+                        </td>
+
+                        <td className="py-4 px-4 whitespace-nowrap">
+                          {h.is_recurring ? (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                              Annual (Every Year)
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                              One-time
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="py-4 px-4 max-w-sm truncate text-xs text-slate-600">
+                          {h.description || '—'}
+                        </td>
+
+                        <td className="py-4 px-5 whitespace-nowrap text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingHoliday(h);
+                                setHolidayModalOpen(true);
+                              }}
+                              className="p-1.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                              title="Edit Holiday"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteHoliday(h.id, h.title)}
+                              className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                              title="Delete Holiday"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Timesheet Details Modal */}
       {selectedRecord && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
@@ -869,10 +1109,10 @@ export default function AttendancePage() {
               <div>
                 <h3 className="text-lg font-bold flex items-center gap-2">
                   <ListTodo className="w-5 h-5 text-indigo-200" />
-                  Timesheet Details
+                  Session Timesheet Entries
                 </h3>
                 <p className="text-xs text-indigo-100 mt-0.5">
-                  Logged tasks for {selectedRecord.profile?.first_name} {selectedRecord.profile?.last_name}
+                  Tasks submitted by {selectedRecord.profile?.first_name} {selectedRecord.profile?.last_name}
                 </p>
               </div>
               <button
@@ -883,34 +1123,16 @@ export default function AttendancePage() {
               </button>
             </div>
 
-            <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs text-slate-600">
-              <div>
-                <span className="font-medium text-slate-500">Check In:</span>{' '}
-                <span className="font-semibold text-slate-700">
-                  {formatDateTime(selectedRecord.check_in_at)}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-slate-500">Duration:</span>{' '}
-                <span className="font-bold text-indigo-600">
-                  {selectedRecord.total_duration_human || '—'}
-                </span>
-              </div>
-            </div>
-
             <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4">
               {!selectedRecord.timesheet_entries || selectedRecord.timesheet_entries.length === 0 ? (
                 <div className="text-center py-8">
                   <Sparkles className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-slate-600">No timesheet entries logged</p>
+                  <p className="text-sm font-medium text-slate-600">No task entries logged for this session</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {selectedRecord.timesheet_entries.map((ts: TimesheetEntry, idx: number) => (
-                    <div
-                      key={ts.id || idx}
-                      className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5"
-                    >
+                  {selectedRecord.timesheet_entries.map((ts, idx) => (
+                    <div key={ts.id || idx} className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-slate-800 text-sm">{ts.task}</span>
                         <span className="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md">
@@ -918,9 +1140,7 @@ export default function AttendancePage() {
                         </span>
                       </div>
                       {ts.task_description && (
-                        <p className="text-xs text-slate-600 whitespace-pre-line">
-                          {ts.task_description}
-                        </p>
+                        <p className="text-xs text-slate-600 whitespace-pre-line">{ts.task_description}</p>
                       )}
                     </div>
                   ))}
@@ -940,62 +1160,56 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {/* Admin Reject Remarks Modal */}
+      {/* Reject Remarks Modal */}
       {rejectModalItem && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden">
             <div className="px-6 py-4 bg-red-600 text-white flex items-center justify-between">
               <h3 className="text-lg font-bold flex items-center gap-2">
-                <XCircle className="w-5 h-5" />
+                <XCircle className="w-5 h-5 text-red-200" />
                 Reject Regularisation Request
               </h3>
-              <button
-                onClick={() => setRejectModalItem(null)}
-                className="text-white/80 hover:text-white p-1 rounded-lg transition"
-              >
+              <button onClick={() => setRejectModalItem(null)} className="text-white/80 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleConfirmReject} className="p-6 space-y-4">
-              <p className="text-sm text-slate-600">
-                Are you sure you want to reject the regularisation request for{' '}
-                <strong className="text-slate-800">
-                  {rejectModalItem.profile?.first_name} {rejectModalItem.profile?.last_name}
-                </strong>{' '}
-                on <strong className="text-slate-800">{rejectModalItem.date}</strong>?
+              <p className="text-xs text-slate-600">
+                You are rejecting regularisation request for{' '}
+                <span className="font-bold text-slate-800">{rejectModalItem.profile?.first_name} {rejectModalItem.profile?.last_name}</span>{' '}
+                on date <span className="font-bold text-slate-800">{rejectModalItem.date}</span>.
               </p>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Reason for Rejection / Remarks (Optional)
+                <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
+                  Admin Remarks / Reason for Rejection
                 </label>
-                <div className="relative">
-                  <MessageSquare className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <textarea
-                    rows={3}
-                    placeholder="Enter rejection remarks..."
-                    value={rejectRemarks}
-                    onChange={(e) => setRejectRemarks(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 resize-none"
-                  />
-                </div>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Explain why this request is being rejected..."
+                  value={rejectRemarks}
+                  onChange={(e) => setRejectRemarks(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition resize-none"
+                />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setRejectModalItem(null)}
-                  className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition"
+                  disabled={rejecting}
+                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={rejecting}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition shadow-md disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl shadow-md transition disabled:opacity-50"
                 >
-                  {rejecting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {rejecting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   Confirm Rejection
                 </button>
               </div>
@@ -1003,6 +1217,18 @@ export default function AttendancePage() {
           </div>
         </div>
       )}
+
+      {/* Holiday Modal (Add / Edit) */}
+      <HolidayModal
+        isOpen={holidayModalOpen}
+        onClose={() => {
+          setHolidayModalOpen(false);
+          setEditingHoliday(null);
+        }}
+        onSubmit={handleSaveHoliday}
+        holidayToEdit={editingHoliday}
+        loading={savingHoliday}
+      />
     </div>
   );
 }

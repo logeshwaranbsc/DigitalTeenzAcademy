@@ -63,19 +63,34 @@ export async function getAdminAttendance(
 /**
  * Get the current check-in status for the authenticated user.
  * Returns the active Attendance record (or null if not checked in).
- * Call this on page load to restore the live timer.
+ * Includes holiday & weekend status.
  */
 export async function getAttendanceStatus(): Promise<{
   checked_in: boolean;
   already_completed_today: boolean;
+  is_holiday?: boolean;
+  holiday?: { id: string; title: string; description: string | null; date: string } | null;
+  is_weekend?: boolean;
+  can_check_in?: boolean;
   data: Attendance | null;
 }> {
   const res = await apiClient.get<
-    ApiResponse<Attendance> & { checked_in: boolean; already_completed_today: boolean }
+    ApiResponse<Attendance> & {
+      checked_in: boolean;
+      already_completed_today: boolean;
+      is_holiday?: boolean;
+      holiday?: { id: string; title: string; description: string | null; date: string } | null;
+      is_weekend?: boolean;
+      can_check_in?: boolean;
+    }
   >('/attendance/status');
   return {
     checked_in: res.data.checked_in,
     already_completed_today: res.data.already_completed_today ?? false,
+    is_holiday: res.data.is_holiday ?? false,
+    holiday: res.data.holiday ?? null,
+    is_weekend: res.data.is_weekend ?? false,
+    can_check_in: res.data.can_check_in ?? true,
     data: res.data.data ?? null,
   };
 }

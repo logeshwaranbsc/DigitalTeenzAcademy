@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminRegularisationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RequireAdmin;
@@ -24,6 +25,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([SupabaseAuth::class])->group(function () {
     // Get authenticated user's profile
     Route::post('/auth/profile', [AuthController::class, 'profile']);
+
+    // Organization Holidays (View)
+    Route::get('/holidays', [HolidayController::class, 'index']);
 
     // ── Attendance / Check-In / Check-Out ────────────────────────────────────
     Route::prefix('attendance')->group(function () {
@@ -56,6 +60,11 @@ Route::middleware([SupabaseAuth::class, RequireAdmin::class])->group(function ()
     Route::get('/admin/regularisations', [AdminRegularisationController::class, 'index']);
     Route::post('/admin/regularisations/{id}/approve', [AdminRegularisationController::class, 'approve']);
     Route::post('/admin/regularisations/{id}/reject', [AdminRegularisationController::class, 'reject']);
+
+    // Admin Holiday Management
+    Route::post('/holidays', [HolidayController::class, 'store']);
+    Route::put('/holidays/{id}', [HolidayController::class, 'update']);
+    Route::delete('/holidays/{id}', [HolidayController::class, 'destroy']);
 
     // User Management CRUD
     Route::get('/users', [UserController::class, 'index']);

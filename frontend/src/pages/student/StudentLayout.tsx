@@ -60,12 +60,12 @@ export default function StudentLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand */}
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-100">
+        <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-100 flex-shrink-0">
           <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
@@ -117,7 +117,7 @@ export default function StudentLayout() {
         </nav>
 
         {/* User info & Logout */}
-        <div className="px-3 py-4 border-t border-slate-100">
+        <div className="px-3 py-4 border-t border-slate-100 flex-shrink-0">
           {profile && (
             <div className="flex items-center gap-3 px-3 py-2 mb-2">
               <div className="w-9 h-9 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">

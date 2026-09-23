@@ -83,7 +83,7 @@ export interface UserFilters {
 
 // ─── Attendance / Check-In Types ─────────────────────────────────────────────
 
-export type AttendanceStatus = 'active' | 'completed' | 'absent' | 'present';
+export type AttendanceStatus = 'active' | 'completed' | 'absent' | 'present' | 'holiday' | 'regularised';
 export type AttendanceUserType = 'student' | 'employee';
 
 export interface Attendance {
@@ -129,8 +129,46 @@ export interface AdminAttendanceStats {
   total_records: number;
   active_count: number;
   completed_count: number;
+  absent_count: number;
+  regularised_count: number;
+  holiday_count: number;
   total_minutes: number;
   total_hours_formatted: string;
+}
+
+export interface AttendanceStatusResponse {
+  checked_in: boolean;
+  already_completed_today: boolean;
+  is_holiday?: boolean;
+  holiday?: Holiday | null;
+  is_weekend?: boolean;
+  can_check_in?: boolean;
+  data?: Attendance | null;
+}
+
+// ─── Holiday Types ────────────────────────────────────────────────────────────
+
+export interface Holiday {
+  id: string;
+  title: string;
+  description: string | null;
+  date: string;
+  is_recurring: boolean;
+  created_by?: string | null;
+  creator?: {
+    id: string;
+    full_name: string;
+    email: string;
+  } | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface HolidayFormData {
+  title: string;
+  date: string;
+  description?: string;
+  is_recurring?: boolean;
 }
 
 // ─── Attendance Regularisation Types ──────────────────────────────────────────

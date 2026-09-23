@@ -265,7 +265,9 @@ export default function UserAttendancePage() {
                           {rec.check_out_at ? (
                             formatDateTime(rec.check_out_at)
                           ) : rec.status === 'absent' ? (
-                            <span className="text-red-500 text-xs font-semibold">Unclosed (Absent)</span>
+                            <span className="text-red-500 text-xs font-semibold">No Check-In (Absent)</span>
+                          ) : rec.status === 'holiday' ? (
+                            <span className="text-indigo-600 text-xs font-semibold">Organization Holiday</span>
                           ) : (
                             <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1">
                               <span className="relative flex h-2 w-2">
@@ -289,12 +291,22 @@ export default function UserAttendancePage() {
                           )}
                           {(rec.status === 'completed' || rec.status === 'present') && (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-                              Completed (Present)
+                              Present
                             </span>
                           )}
                           {rec.status === 'absent' && (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
                               Absent
+                            </span>
+                          )}
+                          {rec.status === 'regularised' && (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
+                              Regularised
+                            </span>
+                          )}
+                          {rec.status === 'holiday' && (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                              Holiday
                             </span>
                           )}
                         </td>
