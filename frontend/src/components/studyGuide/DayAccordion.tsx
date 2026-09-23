@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   ChevronDown,
   ChevronRight,
   Bookmark,
   BookmarkCheck,
-  Edit3,
-  Save,
   ExternalLink,
   Target,
   FileText,
@@ -13,13 +11,10 @@ import {
 } from 'lucide-react';
 import type { StudyDay, BookmarkItem } from '../../types/studyGuide';
 import { StudyContentSection } from './StudyContentSection';
-import toast from 'react-hot-toast';
 
 interface DayAccordionProps {
   day: StudyDay;
-  savedNote?: string;
   isBookmarked: boolean;
-  onSaveNote: (dayNumber: number, note: string) => void;
   onToggleBookmark: (item: BookmarkItem) => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
@@ -28,28 +23,12 @@ interface DayAccordionProps {
 
 export const DayAccordion: React.FC<DayAccordionProps> = ({
   day,
-  savedNote = '',
   isBookmarked,
-  onSaveNote,
   onToggleBookmark,
   isExpanded,
   onToggleExpand,
   isBookmarkedSection,
 }) => {
-  const [noteText, setNoteText] = useState(savedNote);
-  const [isNoteSaving, setIsNoteSaving] = useState(false);
-
-  useEffect(() => {
-    setNoteText(savedNote);
-  }, [savedNote]);
-
-  const handleSaveNote = () => {
-    setIsNoteSaving(true);
-    onSaveNote(day.dayNumber, noteText);
-    toast.success(`Notes saved for Day ${day.dayNumber}!`);
-    setTimeout(() => setIsNoteSaving(false), 500);
-  };
-
   const dayBookmarkItem: BookmarkItem = {
     id: `day-${day.dayNumber}`,
     type: 'day',
@@ -203,34 +182,6 @@ export const DayAccordion: React.FC<DayAccordionProps> = ({
               </div>
             </div>
           )}
-
-          {/* Personal Student Notes Area */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 lg:p-5 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                <Edit3 size={15} className="text-amber-500" />
-                <span>📝 My Notes — Day {day.dayNumber}</span>
-              </div>
-            </div>
-
-            <textarea
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Write your personal study notes, key takeaways, or portfolio answers..."
-              className="w-full min-h-[100px] p-3.5 rounded-xl border border-slate-200 text-xs lg:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all resize-y"
-            />
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleSaveNote}
-                disabled={isNoteSaving}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold shadow-2xs transition-all active:scale-95 disabled:opacity-50"
-              >
-                <Save size={14} />
-                <span>{isNoteSaving ? 'Saving...' : 'Save Note'}</span>
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

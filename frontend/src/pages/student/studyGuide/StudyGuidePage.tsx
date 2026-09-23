@@ -14,9 +14,7 @@ type TabType = 'guide' | 'flashcards' | 'planner' | 'references' | 'bookmarks';
 
 export default function StudyGuidePage() {
   const {
-    dayNotes,
     bookmarks,
-    saveDayNote,
     toggleBookmark,
     isBookmarked,
   } = useStudyGuideProgress();
@@ -216,10 +214,8 @@ export default function StudyGuidePage() {
                 module={module}
                 isExpanded={expandedModuleIds.includes(module.id)}
                 onToggleExpand={() => toggleModuleExpand(module.id)}
-                dayNotes={dayNotes}
                 isBookmarked={isBookmarked(`module-${module.id}`)}
                 onToggleBookmark={toggleBookmark}
-                onSaveDayNote={saveDayNote}
                 expandedDayId={expandedDayId}
                 onToggleDayExpand={toggleDayExpand}
                 isBookmarkedItem={isBookmarked}

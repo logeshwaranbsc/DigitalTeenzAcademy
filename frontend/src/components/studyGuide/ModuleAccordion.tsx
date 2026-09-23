@@ -20,10 +20,8 @@ interface ModuleAccordionProps {
   module: Module;
   isExpanded: boolean;
   onToggleExpand: () => void;
-  dayNotes: Record<number, string>;
   isBookmarked: boolean;
   onToggleBookmark: (item: BookmarkItem) => void;
-  onSaveDayNote: (dayNumber: number, note: string) => void;
   expandedDayId: number | null;
   onToggleDayExpand: (dayNumber: number) => void;
   isBookmarkedItem: (id: string) => boolean;
@@ -43,10 +41,8 @@ export const ModuleAccordion: React.FC<ModuleAccordionProps> = ({
   module,
   isExpanded,
   onToggleExpand,
-  dayNotes,
   isBookmarked,
   onToggleBookmark,
-  onSaveDayNote,
   expandedDayId,
   onToggleDayExpand,
   isBookmarkedItem,
@@ -140,9 +136,7 @@ export const ModuleAccordion: React.FC<ModuleAccordionProps> = ({
               <DayAccordion
                 key={day.dayNumber}
                 day={day}
-                savedNote={dayNotes[day.dayNumber] || ''}
                 isBookmarked={isBookmarkedItem(`day-${day.dayNumber}`)}
-                onSaveNote={onSaveDayNote}
                 onToggleBookmark={onToggleBookmark}
                 isExpanded={expandedDayId === day.dayNumber}
                 onToggleExpand={() => onToggleDayExpand(day.dayNumber)}
