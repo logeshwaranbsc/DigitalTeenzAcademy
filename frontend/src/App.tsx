@@ -17,6 +17,7 @@ import AttendancePage from './pages/admin/AttendancePage';
 // Role Layouts & Dashboards
 import StudentLayout from './pages/student/StudentLayout';
 import StudentDashboard from './pages/student/StudentDashboard';
+import StudyGuidePage from './pages/student/studyGuide/StudyGuidePage';
 import EmployeeLayout from './pages/employee/EmployeeLayout';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import UserAttendancePage from './pages/common/UserAttendancePage';
@@ -43,6 +44,7 @@ export default function App() {
             <Route index element={<Navigate to="/student/dashboard" replace />} />
             <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="attendance" element={<UserAttendancePage />} />
+            <Route path="courses" element={<StudyGuidePage />} />
           </Route>
 
           {/* Employee routes with Sidebar Layout */}

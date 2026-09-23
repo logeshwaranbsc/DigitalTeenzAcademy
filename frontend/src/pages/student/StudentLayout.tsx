@@ -16,10 +16,17 @@ import CheckInButton from '../../components/CheckInButton';
 import TimesheetModal from '../../components/TimesheetModal';
 import type { Attendance } from '../../types';
 
-const navItems = [
+interface NavItem {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  placeholder?: boolean;
+}
+
+const navItems: NavItem[] = [
   { to: '/student/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/student/attendance', icon: Clock, label: 'Attendance & Timesheets' },
-  { to: '/student/courses', icon: BookOpen, label: 'My Courses', placeholder: true },
+  { to: '/student/courses', icon: BookOpen, label: 'Digital Marketing Guide' },
 ];
 
 export default function StudentLayout() {
