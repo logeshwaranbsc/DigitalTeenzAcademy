@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Profile;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class SupabaseAuth
@@ -58,8 +59,10 @@ class SupabaseAuth
             $request->attributes->set('auth_user_id', $authUserId);
             $request->attributes->set('auth_email', $authEmail);
 
-            // Pre-load user profile into request attributes once per request
-            $profile = Profile::where('auth_user_id', $authUserId)->first();
+            // Pre-load user profile into request attributes with 60s cache to eliminate DB network roundtrips on every request
+            $profile = Cache::remember("user_profile_{$authUserId}", 60, function () use ($authUserId) {
+                return Profile::where('auth_user_id', $authUserId)->first();
+            });
 
             if ($profile) {
                 $request->attributes->set('auth_profile', $profile);

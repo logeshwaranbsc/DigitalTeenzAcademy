@@ -110,13 +110,17 @@ class TimesheetController extends Controller
 
     private function getProfile(Request $request): Profile|JsonResponse
     {
-        $authUserId = $request->attributes->get('auth_user_id');
+        $profile = $request->attributes->get('auth_profile');
 
-        if (!$authUserId) {
-            return response()->json(['success' => false, 'message' => 'Authentication required.'], 401);
+        if (!$profile) {
+            $authUserId = $request->attributes->get('auth_user_id');
+
+            if (!$authUserId) {
+                return response()->json(['success' => false, 'message' => 'Authentication required.'], 401);
+            }
+
+            $profile = Profile::where('auth_user_id', $authUserId)->first();
         }
-
-        $profile = Profile::where('auth_user_id', $authUserId)->first();
 
         if (!$profile) {
             return response()->json(['success' => false, 'message' => 'User profile not found.'], 404);

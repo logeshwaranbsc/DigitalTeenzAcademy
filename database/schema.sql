@@ -33,6 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_status ON profiles(status);
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_deleted_at ON profiles(deleted_at);
+CREATE INDEX IF NOT EXISTS idx_profiles_status_role ON profiles(status, role);
 
 -- Auto-update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_profiles_updated_at()
@@ -146,6 +147,9 @@ CREATE TABLE IF NOT EXISTS attendances (
 CREATE INDEX IF NOT EXISTS idx_attendances_profile_id ON attendances(profile_id);
 CREATE INDEX IF NOT EXISTS idx_attendances_status ON attendances(status);
 CREATE INDEX IF NOT EXISTS idx_attendances_profile_status ON attendances(profile_id, status);
+CREATE INDEX IF NOT EXISTS idx_attendances_profile_checkin ON attendances(profile_id, check_in_at DESC);
+CREATE INDEX IF NOT EXISTS idx_attendances_checkin ON attendances(check_in_at DESC);
+CREATE INDEX IF NOT EXISTS idx_attendances_status_checkin ON attendances(status, check_in_at DESC);
 
 -- Auto-update updated_at
 CREATE OR REPLACE FUNCTION update_attendances_updated_at()
@@ -248,6 +252,7 @@ CREATE TABLE IF NOT EXISTS attendance_regularisations (
 CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_profile_id ON attendance_regularisations(profile_id);
 CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_status ON attendance_regularisations(status);
 CREATE INDEX IF NOT EXISTS idx_attendance_regularisations_date ON attendance_regularisations(date);
+CREATE INDEX IF NOT EXISTS idx_att_reg_profile_date ON attendance_regularisations(profile_id, date DESC);
 
 -- Auto-update updated_at
 CREATE OR REPLACE FUNCTION update_attendance_regularisations_updated_at()

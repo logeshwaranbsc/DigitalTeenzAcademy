@@ -111,9 +111,12 @@ class AdminRegularisationController extends Controller
             }
 
             if (!$attendance) {
-                $attendance = Attendance::where('profile_id', $reg->profile_id)
-                    ->whereDate('check_in_at', $reg->date)
-                    ->first();
+                $dateStr = $reg->date ? $reg->date->format('Y-m-d') : null;
+                if ($dateStr) {
+                    $attendance = Attendance::where('profile_id', $reg->profile_id)
+                        ->whereBetween('check_in_at', ["{$dateStr} 00:00:00", "{$dateStr} 23:59:59"])
+                        ->first();
+                }
             }
 
             if ($attendance) {
