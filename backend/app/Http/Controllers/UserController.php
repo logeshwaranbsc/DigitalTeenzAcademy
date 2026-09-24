@@ -110,10 +110,16 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Create Supabase Auth user (server-side via service role key)
+            // 1. Create Supabase Auth user (server-side via service role key with user metadata)
             $authUser = $this->supabase->createAuthUser(
                 $validated['email'],
-                $validated['password']
+                $validated['password'],
+                [
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'role' => $validated['role'],
+                    'phone' => $validated['phone'] ?? null,
+                ]
             );
 
             $authUserId = $authUser['id'] ?? null;
@@ -121,16 +127,18 @@ class UserController extends Controller
                 throw new \Exception('Failed to obtain auth user ID from Supabase.');
             }
 
-            // 2. Create application profile
-            $profile = Profile::create([
-                'auth_user_id' => $authUserId,
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'] ?? null,
-                'role' => $validated['role'],
-                'status' => $validated['status'] ?? 'active',
-            ]);
+            // 2. Create or update application profile (handles trigger pre-insert)
+            $profile = Profile::updateOrCreate(
+                ['auth_user_id' => $authUserId],
+                [
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'email' => $validated['email'],
+                    'phone' => $validated['phone'] ?? null,
+                    'role' => $validated['role'],
+                    'status' => $validated['status'] ?? 'active',
+                ]
+            );
 
             DB::commit();
 

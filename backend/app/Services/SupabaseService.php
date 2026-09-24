@@ -18,19 +18,24 @@ class SupabaseService
     /**
      * Create a Supabase Auth user (uses service role key if available, falls back to signup API)
      */
-    public function createAuthUser(string $email, string $password): array
+    public function createAuthUser(string $email, string $password, array $userMetadata = []): array
     {
         // 1. Try admin endpoint if service role key is available
         if (!empty($this->serviceRoleKey)) {
+            $payload = [
+                'email' => $email,
+                'password' => $password,
+                'email_confirm' => true,
+            ];
+            if (!empty($userMetadata)) {
+                $payload['user_metadata'] = $userMetadata;
+            }
+
             $response = Http::withoutVerifying()->withHeaders([
                 'apikey' => $this->serviceRoleKey,
                 'Authorization' => 'Bearer ' . $this->serviceRoleKey,
                 'Content-Type' => 'application/json',
-            ])->post(rtrim($this->url, '/') . '/auth/v1/admin/users', [
-                'email' => $email,
-                'password' => $password,
-                'email_confirm' => true,
-            ]);
+            ])->post(rtrim($this->url, '/') . '/auth/v1/admin/users', $payload);
 
             if ($response->successful()) {
                 return $response->json();
@@ -44,13 +49,18 @@ class SupabaseService
 
         // 2. Fallback to signup endpoint using anon key
         $anonKey = config('services.supabase.anon_key');
+        $payload = [
+            'email' => $email,
+            'password' => $password,
+        ];
+        if (!empty($userMetadata)) {
+            $payload['data'] = $userMetadata;
+        }
+
         $response = Http::withoutVerifying()->withHeaders([
             'apikey' => $anonKey,
             'Content-Type' => 'application/json',
-        ])->post(rtrim($this->url, '/') . '/auth/v1/signup', [
-            'email' => $email,
-            'password' => $password,
-        ]);
+        ])->post(rtrim($this->url, '/') . '/auth/v1/signup', $payload);
 
         if (!$response->successful()) {
             $error = $response->json('msg') ?? $response->json('message') ?? $response->json('error_description') ?? 'Failed to create auth user';

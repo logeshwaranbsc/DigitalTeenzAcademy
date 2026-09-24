@@ -53,22 +53,28 @@ class CreateAdminUser extends Command
         try {
             $supabase = app(SupabaseService::class);
 
-            // 1. Create Supabase Auth user
+            // 1. Create Supabase Auth user with metadata
             $this->info('→ Creating Supabase Auth account...');
-            $authUser = $supabase->createAuthUser($email, $password);
+            $authUser = $supabase->createAuthUser($email, $password, [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'role' => 'admin',
+            ]);
             $authUserId = $authUser['id'];
             $this->info("  ✓ Auth account created (ID: {$authUserId})");
 
-            // 2. Create profile with admin role
+            // 2. Create or update profile with admin role
             $this->info('→ Creating admin profile...');
-            $profile = Profile::create([
-                'auth_user_id' => $authUserId,
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'email' => $email,
-                'role' => 'admin',
-                'status' => 'active',
-            ]);
+            $profile = Profile::updateOrCreate(
+                ['auth_user_id' => $authUserId],
+                [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                    'role' => 'admin',
+                    'status' => 'active',
+                ]
+            );
             $this->info("  ✓ Admin profile created (ID: {$profile->id})");
 
             $this->info('');
