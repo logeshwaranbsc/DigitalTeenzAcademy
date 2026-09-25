@@ -18,6 +18,7 @@ import AttendancePage from './pages/admin/AttendancePage';
 import StudentLayout from './pages/student/StudentLayout';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudyGuidePage from './pages/student/studyGuide/StudyGuidePage';
+import ModuleDetailPage from './pages/student/studyGuide/ModuleDetailPage';
 import EmployeeLayout from './pages/employee/EmployeeLayout';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import UserAttendancePage from './pages/common/UserAttendancePage';
@@ -31,6 +32,16 @@ export default function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+          {/* Standalone full-screen Module Detail view (No Sidebar) */}
+          <Route
+            path="/student/courses/module/:moduleId"
+            element={
+              <RoleRoute allowedRoles={['student']}>
+                <ModuleDetailPage />
+              </RoleRoute>
+            }
+          />
 
           {/* Student routes with Sidebar Layout */}
           <Route
