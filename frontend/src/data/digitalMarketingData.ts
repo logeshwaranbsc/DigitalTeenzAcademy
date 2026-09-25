@@ -254,14 +254,16 @@ export const MODULES_DATA: Module[] = [
                 title: "Dharaneetharan Instagram Reels",
                 subtitle: "Clarity in short-form business & strategy content",
                 url: "https://www.instagram.com/dharaneetharan/reels/",
-                hasLink: true
+                hasLink: true,
+                imageUrl: "/assets/images/referencelinkimage1.png"
               },
               {
                 id: "ref-m2-d5-2",
                 title: "Journey With Sudhan",
                 subtitle: "Clarity in practical career & entrepreneurship advice",
                 url: "https://www.instagram.com/journey_with_sudhan/",
-                hasLink: true
+                hasLink: true,
+                imageUrl: "/assets/images/referencelinkimage2.png"
               }
             ]
           },
@@ -276,14 +278,16 @@ export const MODULES_DATA: Module[] = [
                 title: "Sakthivel Pannerselvam",
                 subtitle: "Credibility and business growth consulting",
                 url: "https://www.instagram.com/sakthivelpannerselvam6/",
-                hasLink: true
+                hasLink: true,
+                imageUrl: "/assets/images/referencelinkimage3.png"
               },
               {
                 id: "ref-m2-d5-4",
                 title: "Sangeetha Sabish",
                 subtitle: "Credibility in branding & marketing education",
                 url: "https://www.instagram.com/sangeethasabishek/",
-                hasLink: true
+                hasLink: true,
+                imageUrl: "/assets/images/referencelinkimage4.png"
               }
             ]
           }
@@ -302,7 +306,8 @@ export const MODULES_DATA: Module[] = [
             id: "ref-m2-d5-1",
             title: "Dharaneetharan Instagram Reels",
             url: "https://www.instagram.com/dharaneetharan/reels/",
-            hasLink: true
+            hasLink: true,
+            imageUrl: "/assets/images/referencelinkimage1.png"
           },
           {
             id: "ref-m2-d5-2",
@@ -549,7 +554,7 @@ export const MODULES_DATA: Module[] = [
                 ["Bold Statement Hook", "Contrarian / Surprising claim", "'SEO is NOT dead, but you are doing it wrong.'"],
                 ["Curiosity Hook", "Creates an open loop", "'The exact 3-step strategy I used to get 10k views...'"],
                 ["Pain Point Hook", "Targets immediate frustration", "'Tired of posting reels with zero client inquiries?'"],
-                ["Story Hook", "Personal narrative entry", "'3 months ago I had 0 clients. Here is what changed...'" ]
+                ["Story Hook", "Personal narrative entry", "'3 months ago I had 0 clients. Here is what changed...'"]
               ]
             }
           }

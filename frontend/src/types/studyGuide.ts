@@ -10,6 +10,7 @@ export interface ReferenceLink {
   url?: string;
   category?: string;
   hasLink: boolean;
+  imageUrl?: string;
 }
 
 export interface ContentSection {

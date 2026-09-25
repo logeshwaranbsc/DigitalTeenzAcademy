@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  ChevronDown,
-  ChevronRight,
   ExternalLink,
   CheckCircle2,
   Bookmark,
@@ -9,6 +7,14 @@ import {
   AlertCircle,
   ArrowRight,
   HelpCircle,
+  Sparkles,
+  Search,
+  FileText,
+  Share2,
+  Mail,
+  DollarSign,
+  Users,
+  ShieldCheck,
 } from 'lucide-react';
 import type { ContentSection, BookmarkItem } from '../../types/studyGuide';
 
@@ -25,10 +31,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
   dayNumber,
   isBookmarked,
   onToggleBookmark,
-  defaultExpanded = true,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-
   const bookmarkItem: BookmarkItem = {
     id: `sec-${section.id}`,
     type: 'section',
@@ -38,160 +41,238 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
   };
 
   return (
-    <div className="border border-slate-200/80 rounded-2xl bg-white shadow-xs overflow-hidden transition-all duration-200 hover:border-slate-300">
-      {/* Sub-accordion Header */}
-      <div
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3.5 bg-slate-50/70 hover:bg-slate-100/80 flex items-center justify-between cursor-pointer select-none transition-colors border-b border-slate-100"
-      >
-        <div className="flex items-center gap-2.5">
-          <span className="text-slate-500 hover:text-slate-800 transition-colors">
-            {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-          </span>
-          <h4 className="text-sm lg:text-base font-bold text-slate-800 tracking-tight">
-            {section.title}
-          </h4>
-        </div>
+    <div className="border border-slate-200/90 rounded-2xl bg-white shadow-sm overflow-hidden transition-all duration-200 hover:border-slate-400">
+      {/* Card Header */}
+      <div className="w-full px-5 py-4 bg-slate-50/80 flex items-center justify-between gap-4 border-b border-slate-100">
+        <h4 className="text-base lg:text-lg font-black text-slate-900 tracking-tight">
+          {section.title}
+        </h4>
 
-        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          <button
-            onClick={() => onToggleBookmark(bookmarkItem)}
-            className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-              isBookmarked
-                ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'
-            }`}
-            title={isBookmarked ? 'Bookmarked' : 'Bookmark Section'}
-          >
-            {isBookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-          </button>
-        </div>
+        <button
+          onClick={() => onToggleBookmark(bookmarkItem)}
+          className={`p-2 rounded-xl text-xs font-semibold transition-all ${
+            isBookmarked
+              ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
+              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
+          }`}
+          title={isBookmarked ? 'Bookmarked' : 'Bookmark Section'}
+        >
+          {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+        </button>
       </div>
 
-      {/* Sub-accordion Body */}
-      {isExpanded && (
-        <div className="p-4 lg:p-5 space-y-4 text-sm text-slate-700 leading-relaxed">
-          {/* Text Content */}
-          {section.content && (
-            <div className="prose prose-slate max-w-none text-slate-600 text-sm whitespace-pre-line">
-              {section.content}
-            </div>
-          )}
+      {/* Card Content Body */}
+      <div className="p-5 lg:p-6 space-y-5 text-sm text-slate-800 leading-relaxed">
+        {/* Text Content */}
+        {section.content && (
+          <div className="prose prose-slate max-w-none text-slate-700 text-sm whitespace-pre-line">
+            {section.content}
+          </div>
+        )}
 
-          {/* Callout Box */}
-          {section.calloutText && (
-            <div className="bg-amber-50/80 border-l-4 border-amber-500 rounded-r-xl p-4 flex items-start gap-3 text-amber-900 shadow-2xs">
-              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs lg:text-sm font-medium whitespace-pre-line">
-                {section.calloutText}
-              </div>
+        {/* Callout Box */}
+        {section.calloutText && (
+          <div className="bg-amber-50/90 border-l-4 border-amber-500 rounded-r-xl p-4 flex items-start gap-3 text-slate-800 shadow-2xs border border-amber-200/70">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="text-xs lg:text-sm font-medium whitespace-pre-line">
+              {section.calloutText}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Table Content */}
-          {section.table && (
-            <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs my-3">
-              <table className="w-full text-left border-collapse min-w-[500px]">
-                <thead>
-                  <tr className="bg-slate-100/90 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
-                    {section.table.headers.map((head, idx) => (
-                      <th key={idx} className="p-3 lg:p-3.5">
-                        {head}
-                      </th>
+        {/* Table Content */}
+        {section.table && (
+          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs my-3">
+            <table className="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr className="bg-slate-100 text-slate-900 text-xs font-black uppercase tracking-wider border-b border-slate-200">
+                  {section.table.headers.map((head, idx) => (
+                    <th key={idx} className="p-3.5 lg:p-4">
+                      {head}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs lg:text-sm text-slate-700 font-medium">
+                {section.table.rows.map((row, rIdx) => (
+                  <tr key={rIdx} className="hover:bg-slate-50/90 transition-colors">
+                    {row.map((cell, cIdx) => (
+                      <td key={cIdx} className="p-3.5 lg:p-4 leading-normal">
+                        {cell}
+                      </td>
                     ))}
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs lg:text-sm text-slate-600">
-                  {section.table.rows.map((row, rIdx) => (
-                    <tr key={rIdx} className="hover:bg-slate-50/80 transition-colors">
-                      {row.map((cell, cIdx) => (
-                        <td key={cIdx} className="p-3 lg:p-3.5 font-normal leading-normal">
-                          {cell}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Checklist */}
-          {section.checklist && (
-            <div className="space-y-4 my-2">
-              {section.checklist.map((group, gIdx) => (
-                <div key={gIdx} className="bg-slate-50/60 rounded-xl p-4 border border-slate-100">
-                  <h5 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
-                    {group.label}
-                  </h5>
-                  <ul className="space-y-2.5">
-                    {group.items.map((item, iIdx) => (
-                      <li key={iIdx} className="flex items-start gap-2.5 text-xs lg:text-sm text-slate-700">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Flow Diagram */}
-          {section.flowSteps && (
-            <div className="bg-cyan-50/40 border border-cyan-100 rounded-2xl p-4 lg:p-5 my-3">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                {section.flowSteps.map((step, idx) => (
-                  <React.Fragment key={idx}>
-                    <div className="flex-1 bg-white border border-cyan-200/80 rounded-xl p-3 shadow-2xs text-center font-semibold text-xs lg:text-sm text-slate-800">
-                      {step}
-                    </div>
-                    {idx < section.flowSteps!.length - 1 && (
-                      <div className="flex justify-center text-cyan-500">
-                        <ArrowRight className="w-4 h-4 rotate-90 md:rotate-0" />
-                      </div>
-                    )}
-                  </React.Fragment>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Feature Cards Grid (Core Channels & Checklists) matching reference design */}
+        {section.checklist && (
+          <div className="space-y-6 my-3">
+            {section.checklist.map((group, gIdx) => (
+              <div key={gIdx} className="space-y-4">
+                <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles size={14} className="text-cyan-600" />
+                  <span>{group.label}</span>
+                </h5>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {group.items.map((item, iIdx) => {
+                    const hasColon = item.includes(':');
+                    const parts = item.split(':');
+                    const title = hasColon ? parts[0].trim() : item;
+                    const description = hasColon ? parts.slice(1).join(':').trim() : '';
+                    const numStr = String(iIdx + 1).padStart(2, '0');
+
+                    // Pick icon based on channel keyword
+                    let IconComponent: React.ElementType = CheckCircle2;
+                    const lowerTitle = title.toLowerCase();
+                    if (lowerTitle.includes('seo')) IconComponent = Search;
+                    else if (lowerTitle.includes('content')) IconComponent = FileText;
+                    else if (lowerTitle.includes('social')) IconComponent = Share2;
+                    else if (lowerTitle.includes('email')) IconComponent = Mail;
+                    else if (lowerTitle.includes('paid') || lowerTitle.includes('ad')) IconComponent = DollarSign;
+                    else if (lowerTitle.includes('affiliate') || lowerTitle.includes('influencer')) IconComponent = Users;
+                    else if (lowerTitle.includes('quality') || lowerTitle.includes('trust')) IconComponent = ShieldCheck;
+
+                    return (
+                      <div
+                        key={iIdx}
+                        className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-md hover:border-slate-400 transition-all duration-300 flex flex-col justify-between space-y-4 group"
+                      >
+                        {/* Top Row: Icon pill on left, Amber/Gold number tag on right */}
+                        <div className="flex items-center justify-between">
+                          <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                            <IconComponent size={18} />
+                          </div>
+
+                          <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider">
+                            {numStr}
+                          </span>
+                        </div>
+
+                        {/* Title & Description */}
+                        <div className="space-y-1.5 min-w-0">
+                          <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors leading-snug">
+                            {title}
+                          </h6>
+                          {description && (
+                            <p className="text-xs lg:text-sm text-slate-600 font-medium leading-relaxed">
+                              {description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+        )}
 
-          {/* Reference Links Buttons (e.g. Dharaneetharan, Journey With Sudhan, Sakthivel Pannerselvam, Sangeetha Sabish) */}
-          {section.referenceLinks && section.referenceLinks.length > 0 && (
-            <div className="space-y-3 pt-2">
-              {section.referenceLinks.map((ref) => (
-                <div
-                  key={ref.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-purple-50/50 border border-purple-100 hover:border-purple-200 transition-colors"
-                >
-                  <div>
-                    <h6 className="text-sm font-bold text-slate-800">{ref.title}</h6>
-                    {ref.subtitle && <p className="text-xs text-slate-500 mt-0.5">{ref.subtitle}</p>}
+        {/* Flow Diagram */}
+        {section.flowSteps && (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 lg:p-5 my-3 text-slate-900 shadow-2xs">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              {section.flowSteps.map((step, idx) => (
+                <React.Fragment key={idx}>
+                  <div className="flex-1 bg-white border border-slate-200 rounded-xl p-3 shadow-2xs text-center font-bold text-xs lg:text-sm text-slate-800">
+                    {step}
                   </div>
-
-                  {ref.hasLink && ref.url ? (
-                    <a
-                      href={ref.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-2xs transition-colors"
-                    >
-                      <span>View Reference</span>
-                      <ExternalLink size={14} />
-                    </a>
-                  ) : (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-500 text-xs font-medium">
-                      <HelpCircle size={14} />
-                      <span>Example reference not available</span>
+                  {idx < section.flowSteps!.length - 1 && (
+                    <div className="flex justify-center text-amber-600">
+                      <ArrowRight className="w-4 h-4 rotate-90 md:rotate-0" />
                     </div>
                   )}
-                </div>
+                </React.Fragment>
               ))}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+
+        {/* Full-View Reference Link Showcase Cards */}
+        {section.referenceLinks && section.referenceLinks.length > 0 && (
+          <div className="space-y-4 pt-2">
+            <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <Sparkles size={14} className="text-amber-600" />
+              <span>Reference Profiles & Visual Examples</span>
+            </h5>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {section.referenceLinks.map((ref) => (
+                <a
+                  key={ref.id}
+                  href={ref.hasLink && ref.url ? ref.url : '#'}
+                  target={ref.hasLink && ref.url ? '_blank' : '_self'}
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (!ref.hasLink || !ref.url) e.preventDefault();
+                  }}
+                  className={`group relative flex flex-col justify-between rounded-3xl border transition-all duration-300 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 ${
+                    ref.hasLink && ref.url
+                      ? 'bg-white border-amber-200/80 hover:border-amber-400 cursor-pointer'
+                      : 'bg-slate-50 border-slate-200 opacity-80 cursor-default'
+                  }`}
+                >
+                  {/* Top Image */}
+                  <div className="w-full h-48 sm:h-52 bg-slate-100 overflow-hidden relative border-b border-slate-100">
+                    {ref.imageUrl ? (
+                      <img
+                        src={ref.imageUrl}
+                        alt={ref.title}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                        <ExternalLink className="w-10 h-10 opacity-50" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Middle Content & Bottom Link */}
+                  <div className="p-5 flex flex-col flex-1 justify-between gap-4">
+                    <div className="space-y-2">
+                      {/* Soft Pill Badge */}
+                      <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full bg-amber-50 text-amber-700 border border-amber-200/80">
+                        {ref.subtitle || 'Reference Profile'}
+                      </span>
+
+                      {/* Card Title */}
+                      <h6 className="text-base font-black text-slate-900 group-hover:text-amber-700 transition-colors leading-snug">
+                        {ref.title}
+                      </h6>
+
+                      {/* Subtitle / Description / Link URL */}
+                      {ref.url && (
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed truncate">
+                          {ref.url}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Bottom Action Link */}
+                    <div className="pt-2 flex items-center justify-between text-xs font-extrabold text-slate-800 group-hover:text-amber-700 transition-colors">
+                      {ref.hasLink && ref.url ? (
+                        <div className="flex items-center gap-1.5">
+                          <span>View Reference</span>
+                          <span className="group-hover:translate-x-1 transition-transform">→</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-400 flex items-center gap-1 text-[11px]">
+                          <HelpCircle size={14} /> No link available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

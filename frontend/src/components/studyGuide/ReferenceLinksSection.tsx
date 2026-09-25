@@ -47,9 +47,18 @@ export const ReferenceLinksSection: React.FC = () => {
             href="https://www.instagram.com/dharaneetharan/reels/"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 transition-all flex items-center justify-between gap-3 group"
+            className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 group relative overflow-hidden"
           >
-            <div>
+            <div className="w-full sm:w-28 h-20 rounded-xl overflow-hidden flex-shrink-0 relative border border-pink-400/40">
+              <img
+                src="/assets/images/referencelinkimage1.png"
+                alt="Dharaneetharan Instagram Reels"
+                className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-slate-950/20" />
+            </div>
+
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 text-xs font-bold text-pink-300">
                 <ShieldCheck size={14} />
                 <span>Identity (Clarity)</span>
@@ -57,7 +66,7 @@ export const ReferenceLinksSection: React.FC = () => {
               <h4 className="text-sm font-bold text-white mt-1">Dharaneetharan Reels</h4>
               <p className="text-[11px] text-slate-300">Short-form business strategy</p>
             </div>
-            <span className="p-2 rounded-xl bg-purple-600 group-hover:bg-purple-500 text-white transition-colors">
+            <span className="p-2 rounded-xl bg-purple-600 group-hover:bg-purple-500 text-white transition-colors flex-shrink-0">
               <ExternalLink size={16} />
             </span>
           </a>
