@@ -50,7 +50,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
 
         {/* Callout Box */}
         {section.calloutText && (
-          <div className="bg-amber-50/90 border-l-4 border-amber-500 rounded-r-xl p-4 flex items-start gap-3 text-slate-800 shadow-2xs border border-amber-200/70 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="bg-amber-50/90 border-l-4 border-amber-500 rounded-r-2xl p-4 flex items-start gap-3 text-slate-800 shadow-2xs border border-amber-200/70 hover:shadow-lg hover:-translate-y-1 hover:border-amber-400 transition-all duration-300 cursor-pointer">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div className="text-xs lg:text-sm font-medium whitespace-pre-line">
               {section.calloutText}
@@ -60,7 +60,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
 
         {/* Table Content */}
         {section.table && (
-          <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-shadow duration-300 my-3 bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-blue-300 transition-all duration-300 my-3 bg-white">
             <table className="w-full text-left border-collapse min-w-[500px]">
               <thead>
                 <tr className="bg-slate-100 text-slate-900 text-xs font-black uppercase tracking-wider border-b border-slate-200">
@@ -87,7 +87,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                 {section.table.rows.map((row, rIdx) => {
                   const isTwoCol = row.length === 2;
                   return (
-                    <tr key={rIdx} className="hover:bg-blue-50/40 transition-colors">
+                    <tr key={rIdx} className="hover:bg-blue-50/60 transition-colors">
                       {row.map((cell, cIdx) => (
                         <td
                           key={cIdx}
@@ -150,22 +150,22 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                             return (
                               <div
                                 key={iIdx}
-                                className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
+                                className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 hover:ring-2 hover:ring-blue-400/20 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
                               >
                                 {/* Top Row: Icon pill on left, Amber/Gold number tag on right */}
                                 <div className="flex items-center justify-between">
-                                  <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-110 group-hover:bg-emerald-100 transition-transform">
+                                  <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-110 group-hover:bg-emerald-100 group-hover:border-emerald-300 transition-all duration-300">
                                     <IconComponent size={18} />
                                   </div>
 
-                                  <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-105 transition-transform">
+                                  <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-110 group-hover:text-amber-500 transition-transform duration-300">
                                     {numStr}
                                   </span>
                                 </div>
 
                                 {/* Title & Description */}
                                 <div className="space-y-1.5 min-w-0">
-                                  <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors leading-snug">
+                                  <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors duration-300 leading-snug">
                                     {title}
                                   </h6>
                                   {description && (
@@ -185,15 +185,15 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
 
                 {/* Right Column: Related Image matching height */}
                 <div className="lg:col-span-5 flex flex-col h-full w-full">
-                  <div className="relative flex-1 min-h-[300px] h-full w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100 flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                  <div className="relative flex-1 min-h-[300px] h-full w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100 flex flex-col hover:shadow-2xl hover:-translate-y-1.5 hover:border-blue-300 transition-all duration-500 cursor-pointer">
                     <img
                       src={section.imageUrl}
                       alt={section.title}
-                      className="w-full h-full flex-1 object-cover object-center group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                      className="w-full h-full flex-1 object-cover object-center group-hover/img:scale-108 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
 
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs">
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs group-hover/img:shadow-md transition-shadow">
                       <div className="flex items-center gap-2">
                         <Sparkles size={16} className="text-blue-600 animate-pulse" />
                         <span className="font-black text-xs">{section.title}</span>
@@ -222,7 +222,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                         </h5>
                       )}
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {group.items.map((item, iIdx) => {
                           const hasColon = item.includes(':');
                           const parts = item.split(':');
@@ -244,22 +244,22 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                           return (
                             <div
                               key={iIdx}
-                              className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
+                              className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 hover:ring-2 hover:ring-blue-400/20 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
                             >
                               {/* Top Row: Icon pill on left, Amber/Gold number tag on right */}
                               <div className="flex items-center justify-between">
-                                <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-110 group-hover:bg-emerald-100 transition-transform">
+                                <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-110 group-hover:bg-emerald-100 group-hover:border-emerald-300 transition-all duration-300">
                                   <IconComponent size={18} />
                                 </div>
 
-                                <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-105 transition-transform">
+                                <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-110 group-hover:text-amber-500 transition-transform duration-300">
                                   {numStr}
                                 </span>
                               </div>
 
                               {/* Title & Description */}
                               <div className="space-y-1.5 min-w-0">
-                                <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors leading-snug">
+                                <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors duration-300 leading-snug">
                                   {title}
                                 </h6>
                                 {description && (
@@ -310,21 +310,21 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                     return (
                       <div
                         key={idx}
-                        className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
+                        className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 hover:ring-2 hover:ring-blue-400/20 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
                       >
                         {/* Top Row: Step Tag on left, Number tag on right */}
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60 shadow-2xs group-hover:bg-blue-100 transition-colors">
+                          <span className="text-[10px] font-black uppercase text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60 shadow-2xs group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
                             Step {numStr}
                           </span>
-                          <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-105 transition-transform">
+                          <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-110 group-hover:text-amber-500 transition-transform duration-300">
                             {numStr}
                           </span>
                         </div>
 
                         {/* Title & Description */}
                         <div className="space-y-1.5 min-w-0">
-                          <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors leading-snug">
+                          <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors duration-300 leading-snug">
                             {title}
                           </h6>
                           {description && (
@@ -355,9 +355,9 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                   onClick={(e) => {
                     if (!ref.hasLink || !ref.url) e.preventDefault();
                   }}
-                  className={`group relative flex flex-col justify-between rounded-3xl border transition-all duration-300 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 ${
+                  className={`group relative flex flex-col justify-between rounded-3xl border transition-all duration-300 overflow-hidden shadow-xs hover:shadow-2xl hover:-translate-y-2 ${
                     ref.hasLink && ref.url
-                      ? 'bg-white border-amber-200/80 hover:border-amber-400 cursor-pointer'
+                      ? 'bg-white border-amber-200/80 hover:border-amber-400 hover:ring-2 hover:ring-amber-400/20 cursor-pointer'
                       : 'bg-slate-50 border-slate-200 opacity-80 cursor-default'
                   }`}
                 >
@@ -367,11 +367,11 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                       <img
                         src={ref.imageUrl}
                         alt={ref.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-                        <ExternalLink className="w-10 h-10 opacity-50" />
+                        <ExternalLink className="w-10 h-10 opacity-50 group-hover:scale-110 transition-transform duration-300" />
                       </div>
                     )}
                   </div>
@@ -380,7 +380,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                   <div className="p-5 flex flex-col flex-1 justify-between gap-4">
                     <div className="space-y-2">
                       {/* Soft Pill Badge */}
-                      <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full bg-amber-50 text-amber-700 border border-amber-200/80">
+                      <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full bg-amber-50 text-amber-700 border border-amber-200/80 group-hover:bg-amber-100 transition-colors">
                         {ref.subtitle || 'Reference Profile'}
                       </span>
 
@@ -402,7 +402,7 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                       {ref.hasLink && ref.url ? (
                         <div className="flex items-center gap-1.5">
                           <span>View Reference</span>
-                          <span className="group-hover:translate-x-1 transition-transform">→</span>
+                          <span className="group-hover:translate-x-1.5 transition-transform duration-300">→</span>
                         </div>
                       ) : (
                         <span className="text-slate-400 flex items-center gap-1 text-[11px]">

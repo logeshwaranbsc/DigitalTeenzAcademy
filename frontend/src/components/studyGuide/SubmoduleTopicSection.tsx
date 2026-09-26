@@ -67,15 +67,15 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
             {/* Right Column: Related Image matching content height */}
             {imageSrc && (
               <div className="lg:col-span-5 flex flex-col h-full w-full">
-                <div className="relative flex-1 min-h-[300px] h-full w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100 flex flex-col">
+                <div className="relative flex-1 min-h-[300px] h-full w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100 flex flex-col hover:shadow-2xl hover:-translate-y-1.5 hover:border-slate-300 transition-all duration-500 cursor-pointer">
                   <img
                     src={imageSrc}
                     alt={day.title}
-                    className="w-full h-full flex-1 object-cover object-center group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full flex-1 object-cover object-center group-hover/img:scale-108 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
 
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs">
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs group-hover/img:shadow-md transition-shadow">
                     <div className="flex items-center gap-2">
                       <Sparkles size={16} className="text-blue-600 animate-pulse" />
                       <span className="font-black text-xs">Digital Marketing Guide — {day.title}</span>
@@ -147,14 +147,14 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
                 return (
                   <div
                     key={idx}
-                    className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-md hover:border-slate-400 transition-all duration-300 flex flex-col justify-between space-y-4 group"
+                    className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 hover:border-blue-400 hover:ring-2 hover:ring-blue-400/20 transition-all duration-300 flex flex-col justify-between space-y-4 group cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-110 group-hover:bg-emerald-100 group-hover:border-emerald-300 transition-all duration-300">
                         <CheckCircle2 size={18} />
                       </div>
 
-                      <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider">
+                      <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider group-hover:scale-110 group-hover:text-amber-500 transition-transform duration-300">
                         {numStr}
                       </span>
                     </div>
@@ -163,7 +163,7 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
                       <h6 className="text-xs font-black uppercase text-slate-400 tracking-wider">
                         Action Step {numStr}
                       </h6>
-                      <p className="text-xs lg:text-sm text-slate-800 font-bold leading-relaxed">
+                      <p className="text-xs lg:text-sm text-slate-800 font-bold leading-relaxed group-hover:text-blue-900 transition-colors duration-300">
                         {step}
                       </p>
                     </div>

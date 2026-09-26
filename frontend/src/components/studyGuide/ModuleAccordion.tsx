@@ -53,16 +53,16 @@ export const ModuleAccordion: React.FC<ModuleAccordionProps> = ({
     <div
       id={`module-card-${module.id}`}
       onClick={handleOpenModule}
-      className="border border-slate-200 hover:border-slate-300 rounded-3xl bg-white shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer group"
+      className="border border-slate-200 hover:border-cyan-400 rounded-3xl bg-white shadow-xs overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:ring-2 hover:ring-cyan-400/20 cursor-pointer group"
     >
       {/* Module Card Content */}
-      <div className="p-5 lg:p-6 bg-gradient-to-r from-slate-50/90 via-white to-slate-50/50 group-hover:bg-slate-100/60 transition-colors">
+      <div className="p-5 lg:p-6 bg-gradient-to-r from-slate-50/90 via-white to-slate-50/50 group-hover:bg-cyan-50/20 transition-colors duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           {/* Icon, Code, Title & Description */}
           <div className="flex items-start gap-4">
             {/* Module Icon Badge */}
             <div
-              className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${module.color} text-white flex items-center justify-center font-black text-lg shadow-md flex-shrink-0 group-hover:scale-105 transition-transform duration-200`}
+              className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${module.color} text-white flex items-center justify-center font-black text-lg shadow-md flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
             >
               <IconComponent size={22} />
             </div>

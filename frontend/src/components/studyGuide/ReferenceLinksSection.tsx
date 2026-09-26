@@ -140,13 +140,13 @@ export const ReferenceLinksSection: React.FC = () => {
           {allReferences.map((ref, idx) => (
             <div
               key={`${ref.id}-${idx}`}
-              className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs flex items-center justify-between gap-3"
+              className="bg-white border border-slate-200/80 hover:border-purple-300 rounded-2xl p-4 shadow-2xs hover:shadow-xl hover:-translate-y-1 hover:ring-2 hover:ring-purple-400/20 transition-all duration-300 flex items-center justify-between gap-3 group cursor-pointer"
             >
               <div>
                 <span className="text-[10px] font-bold text-slate-400 uppercase">
                   {ref.moduleCode} • Day {ref.dayNumber}
                 </span>
-                <h4 className="text-sm font-bold text-slate-800">{ref.title}</h4>
+                <h4 className="text-sm font-bold text-slate-800 group-hover:text-purple-700 transition-colors">{ref.title}</h4>
                 {ref.subtitle && (
                   <p className="text-xs text-slate-500 mt-0.5">{ref.subtitle}</p>
                 )}
