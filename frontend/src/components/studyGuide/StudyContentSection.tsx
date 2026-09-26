@@ -2,8 +2,6 @@ import React from 'react';
 import {
   ExternalLink,
   CheckCircle2,
-  Bookmark,
-  BookmarkCheck,
   AlertCircle,
   HelpCircle,
   Sparkles,
@@ -19,52 +17,33 @@ import type { ContentSection, BookmarkItem } from '../../types/studyGuide';
 
 interface StudyContentSectionProps {
   section: ContentSection;
-  dayNumber: number;
-  isBookmarked: boolean;
-  onToggleBookmark: (item: BookmarkItem) => void;
+  dayNumber?: number;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (item: BookmarkItem) => void;
   defaultExpanded?: boolean;
+  hideTitle?: boolean;
 }
 
 export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
   section,
-  dayNumber,
-  isBookmarked,
-  onToggleBookmark,
+  hideTitle = false,
 }) => {
-  const bookmarkItem: BookmarkItem = {
-    id: `sec-${section.id}`,
-    type: 'section',
-    targetId: section.id,
-    title: section.title,
-    subtitle: `Day ${dayNumber} Content Section`,
-  };
-
   return (
-    <div className="space-y-4 pt-2">
+    <div className={hideTitle ? "space-y-2 pt-0" : "space-y-4 pt-1"}>
       {/* Section Title Header */}
-      <div className="flex items-center justify-between gap-4 pb-1">
-        <h4 className="text-base lg:text-lg font-black text-slate-900 tracking-tight">
-          {section.title}
-        </h4>
-
-        <button
-          onClick={() => onToggleBookmark(bookmarkItem)}
-          className={`p-1.5 rounded-lg text-xs font-semibold transition-all ${
-            isBookmarked
-              ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
-              : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
-          }`}
-          title={isBookmarked ? 'Bookmarked' : 'Bookmark Section'}
-        >
-          {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-        </button>
-      </div>
+      {!hideTitle && (
+        <div className="pb-1">
+          <h4 className="text-base lg:text-lg font-black text-slate-900 tracking-tight">
+            {section.title}
+          </h4>
+        </div>
+      )}
 
       {/* Content Body */}
-      <div className="space-y-5 text-sm text-slate-800 leading-relaxed">
+      <div className="space-y-5 text-base lg:text-lg text-slate-800 leading-relaxed">
         {/* Text Content */}
         {section.content && (
-          <div className="prose prose-slate max-w-none text-slate-700 text-sm whitespace-pre-line">
+          <div className="prose prose-slate max-w-none text-slate-700 text-base lg:text-lg leading-relaxed whitespace-pre-line font-normal">
             {section.content}
           </div>
         )}
@@ -81,27 +60,47 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
 
         {/* Table Content */}
         {section.table && (
-          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs my-3">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs my-3 bg-white">
             <table className="w-full text-left border-collapse min-w-[500px]">
               <thead>
                 <tr className="bg-slate-100 text-slate-900 text-xs font-black uppercase tracking-wider border-b border-slate-200">
-                  {section.table.headers.map((head, idx) => (
-                    <th key={idx} className="p-3.5 lg:p-4">
-                      {head}
-                    </th>
-                  ))}
+                  {section.table.headers.map((head, idx) => {
+                    const isTwoCol = section.table!.headers.length === 2;
+                    return (
+                      <th
+                        key={idx}
+                        className={`p-3.5 lg:p-4 ${
+                          isTwoCol
+                            ? idx === 0
+                              ? 'w-2/5 lg:w-1/3'
+                              : 'w-3/5 lg:w-2/3 pl-8 lg:pl-16'
+                            : ''
+                        }`}
+                      >
+                        {head}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs lg:text-sm text-slate-700 font-medium">
-                {section.table.rows.map((row, rIdx) => (
-                  <tr key={rIdx} className="hover:bg-slate-50/90 transition-colors">
-                    {row.map((cell, cIdx) => (
-                      <td key={cIdx} className="p-3.5 lg:p-4 leading-normal">
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+                {section.table.rows.map((row, rIdx) => {
+                  const isTwoCol = row.length === 2;
+                  return (
+                    <tr key={rIdx} className="hover:bg-slate-50/90 transition-colors">
+                      {row.map((cell, cIdx) => (
+                        <td
+                          key={cIdx}
+                          className={`p-3.5 lg:p-4 leading-normal ${
+                            cIdx === 0 ? 'font-bold text-slate-900' : 'text-slate-700'
+                          } ${isTwoCol && cIdx === 1 ? 'pl-8 lg:pl-16' : ''}`}
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -110,14 +109,22 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
         {/* Feature Cards Grid (Core Channels & Checklists) matching reference design */}
         {section.checklist && (
           <div className="space-y-6 my-3">
-            {section.checklist.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-4">
-                <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles size={14} className="text-cyan-600" />
-                  <span>{group.label}</span>
-                </h5>
+            {section.checklist.map((group, gIdx) => {
+              const showGroupLabel =
+                Boolean(group.label) &&
+                group.label.toLowerCase().trim() !== section.title.toLowerCase().trim() &&
+                section.checklist!.length > 1;
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              return (
+                <div key={gIdx} className="space-y-4">
+                  {showGroupLabel && (
+                    <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                      <Sparkles size={14} className="text-cyan-600" />
+                      <span>{group.label}</span>
+                    </h5>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {group.items.map((item, iIdx) => {
                     const hasColon = item.includes(':');
                     const parts = item.split(':');
@@ -168,9 +175,10 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
                   })}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
+      )}
 
         {/* Flow Diagram */}
         {section.flowSteps && (

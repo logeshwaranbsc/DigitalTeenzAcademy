@@ -15,11 +15,11 @@ export const MODULES_DATA: Module[] = [
     id: 1,
     code: "M1",
     title: "Introduction to Digital Marketing",
-    subtitle: "Fundamentals, Core Channels & Essential Tools",
+    subtitle: "What is Digital Marketing? | Core Channels & Key Tools",
     dayRange: "Days 1–4",
     startDay: 1,
     endDay: 4,
-    description: "Build a strong foundation in digital marketing concepts, understand the difference between organic and paid marketing, and master essential tools used by top industry professionals.",
+    description: "Digital marketing is the promotion of products or services using digital channels and technologies. Unlike traditional marketing, it is measurable, targeted, and interactive.",
     iconName: "Compass",
     color: "from-blue-500 to-indigo-600",
     days: [
@@ -29,13 +29,13 @@ export const MODULES_DATA: Module[] = [
         moduleId: 1,
         moduleTitle: "Introduction to Digital Marketing",
         title: "What is Digital Marketing?",
-        summary: "Understand the core concepts of digital marketing, organic vs paid reach, and traditional vs digital channels.",
+        summary: "Digital marketing is the promotion of products or services using digital channels and technologies. Unlike traditional marketing, it is measurable, targeted, and interactive.",
         contentSections: [
           {
             id: "m1-d1-s1",
             title: "What is Digital Marketing?",
             type: "text",
-            content: "Digital marketing encompasses all marketing efforts that use an electronic device or the internet. Businesses leverage digital channels such as search engines, social media, email, and websites to connect with current and prospective customers."
+            content: "Digital marketing is the promotion of products or services using digital channels and technologies.\nUnlike traditional marketing, it is measurable, targeted, and interactive."
           },
           {
             id: "m1-d1-s2",
@@ -43,166 +43,38 @@ export const MODULES_DATA: Module[] = [
             type: "checklist",
             checklist: [
               {
-                label: "The 6 Essential Digital Marketing Channels",
+                label: "Core Channels",
                 items: [
-                  "SEO (Search Engine Optimization): Organic search engine visibility and ranking",
-                  "Content Marketing: Creating valuable articles, videos, and guides to attract leads",
-                  "Social Media Marketing: Building brand authority and community on Instagram, LinkedIn, YouTube",
-                  "Email Marketing: Nurturing direct subscriber relationships and automating customer journeys",
-                  "Paid Advertising: PPC and social ads on Meta Ads Manager and Google Ads",
-                  "Affiliate & Influencer Marketing: Partnering with content creators and affiliates to expand reach"
+                  "SEO: getting found organically on search engines",
+                  "Content Marketing: blogs, videos, podcasts, infographics",
+                  "Social Media Marketing: Instagram, LinkedIn, TikTok, Twitter/X",
+                  "Email Marketing: newsletters, welcome sequences, drip campaigns",
+                  "Paid Advertising: Google Ads, Meta Ads, LinkedIn Ads",
+                  "Affiliate & Influencer Marketing: partnering with creators and affiliates"
                 ]
               }
             ]
           },
           {
             id: "m1-d1-s3",
-            title: "Key Differences: Traditional vs Digital",
-            type: "table",
-            table: {
-              headers: ["Feature", "Traditional Marketing", "Digital Marketing"],
-              rows: [
-                ["Channels", "TV, Newspapers, Billboards, Radio", "Social Media, Search Engines, Email, Websites"],
-                ["Targeting", "Broad / Regional demographic", "Hyper-targeted (Behavior, Interests, Intent)"],
-                ["Measurability", "Difficult to calculate exact ROI", "Real-time tracking (CTR, Conversion Rate, ROAS)"],
-                ["Cost", "High initial investment required", "Flexible budgets starting from minimal spend"],
-                ["Interaction", "One-way broadcast communication", "Two-way interactive engagement"]
-              ]
-            }
-          }
-        ],
-        practiceTask: {
-          title: "Channel Audit Task",
-          description: "Select 1 business of your choice (e.g. your favorite local restaurant or brand) and analyze their presence across digital channels.",
-          actionSteps: [
-            "Identify which 3 core digital channels they rely on most.",
-            "Write down 2 areas where their digital presence can be improved.",
-            "Save your notes below for your portfolio."
-          ]
-        },
-        referenceLinks: [
-          {
-            id: "ref-m1-d1-1",
-            title: "Google Digital Marketing Fundamentals",
-            subtitle: "Google Skillshop Certification Guide",
-            hasLink: false
-          }
-        ]
-      },
-      {
-        id: 2,
-        dayNumber: 2,
-        moduleId: 1,
-        moduleTitle: "Introduction to Digital Marketing",
-        title: "Key Marketing Tools",
-        summary: "Discover the must-have software tools for analytics, design, SEO, social scheduling, and paid ads.",
-        contentSections: [
-          {
-            id: "m1-d2-s1",
             title: "Key Tools Every Marketer Needs",
             type: "table",
             table: {
-              headers: ["Category", "Tools", "Primary Use Case"],
+              headers: ["Category", "Tools"],
               rows: [
-                ["Analytics", "Google Analytics 4 (GA4), Google Search Console", "Traffic analysis, user behavior tracking, and search impression indexing"],
-                ["Design", "Canva, Adobe Express, Figma", "Visual graphic design, reel templates, UI mocks, and brand assets"],
-                ["SEO", "Ahrefs Free, Ubersuggest, Google Keyword Planner", "Keyword research, backlink checking, and search volume estimation"],
-                ["Social Scheduling", "Buffer, Later, Hootsuite, Meta Business Suite", "Content calendar scheduling, auto-publishing, and inbox management"],
-                ["Paid Ads", "Meta Ads Manager, Google Ads", "Targeted ad creation, campaign optimization, and pixel tracking"]
-              ]
-            }
-          },
-          {
-            id: "m1-d2-s2",
-            title: "Tool Stack Strategy",
-            type: "calloutText",
-            calloutText: "Pro Tip: As a beginner or freelancer, start with free-tier tools (Canva Free, Meta Business Suite, Google Keyword Planner, GA4). Only upgrade to paid tools (Ahrefs Pro, Canva Pro) once you onboard paying clients."
-          }
-        ],
-        practiceTask: {
-          title: "Tool Setup Assignment",
-          description: "Set up free accounts for Google Analytics 4 (or setup demo account), Canva, and Meta Business Suite.",
-          actionSteps: [
-            "Create your free Canva account and explore templates.",
-            "Access Meta Business Suite for your business page.",
-            "Note down the primary function of each tool."
-          ]
-        },
-        referenceLinks: [
-          {
-            id: "ref-m1-d2-1",
-            title: "Google Analytics 4 Official Demo Account",
-            hasLink: false
-          }
-        ]
-      },
-      {
-        id: 3,
-        dayNumber: 3,
-        moduleId: 1,
-        moduleTitle: "Introduction to Digital Marketing",
-        title: "Ad Platforms Overview",
-        summary: "Learn how major ad platforms operate, intent-based vs interest-based advertising.",
-        contentSections: [
-          {
-            id: "m1-d3-s1",
-            title: "Intent vs Interest Advertising",
-            type: "table",
-            table: {
-              headers: ["Platform", "Type", "User Mindset"],
-              rows: [
-                ["Google Search Ads", "Intent-Based", "User is actively searching for a solution right now (e.g. 'best digital marketing agency in Chennai')"],
-                ["Meta Ads (FB/IG)", "Interest-Based", "User is scrolling for entertainment; ads interrupt with compelling visuals"],
-                ["LinkedIn Ads", "B2B Intent / Professional", "User is networking or researching industry solutions"],
-                ["TikTok Ads", "Short-Form Attention", "User is looking for entertaining content and quick product discoveries"]
+                ["Analytics", "Google Analytics 4 (GA4), Google Search Console"],
+                ["Design", "Canva, Adobe Express, Figma"],
+                ["SEO", "Ahrefs Free, Ubersuggest, Google Keyword Planner"],
+                ["Social Scheduling", "Buffer, Later, Hootsuite, Meta Business Suite"],
+                ["Ads", "Meta Ads Manager, Google Ads"]
               ]
             }
           }
         ],
         practiceTask: {
-          title: "Ad Analysis Task",
-          description: "Find 2 sponsored ads on your Instagram feed and 2 sponsored ads on Google Search.",
-          actionSteps: [
-            "Screenshot the ads.",
-            "Identify the headline, offer, and call-to-action (CTA).",
-            "Write down why you think the ad targeted you."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 4,
-        dayNumber: 4,
-        moduleId: 1,
-        moduleTitle: "Introduction to Digital Marketing",
-        title: "Module 1 Review & Knowledge Check",
-        summary: "Consolidate your learning from Module 1 and test your understanding of core concepts.",
-        contentSections: [
-          {
-            id: "m1-d4-s1",
-            title: "Key Takeaways — Module 1",
-            type: "checklist",
-            checklist: [
-              {
-                label: "Checklist for Module 1 Mastery",
-                items: [
-                  "Understood the 6 primary digital marketing channels",
-                  "Memorized the core marketing tools across Analytics, Design, SEO, Social, and Ads",
-                  "Differentiated between Search Intent vs Social Interest advertising",
-                  "Completed Day 1–3 practical tasks and audit exercises"
-                ]
-              }
-            ]
-          }
-        ],
-        practiceTask: {
-          title: "Module 1 Assessment Task",
-          description: "Review all Module 1 flashcards (Cards 1–6) and achieve 100% 'I Know' status.",
-          actionSteps: [
-            "Go to the Flashcards tab.",
-            "Filter by Module 1.",
-            "Review each card until comfortable."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -1434,12 +1306,12 @@ export const MODULES_DATA: Module[] = [
 
 export const FLASHCARDS_DATA: Flashcard[] = [
   // Module 1 (1-6)
-  { id: 1, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "What are the 6 core channels of digital marketing?", answer: "1. SEO\n2. Content Marketing\n3. Social Media Marketing\n4. Email Marketing\n5. Paid Advertising\n6. Affiliate & Influencer Marketing" },
-  { id: 2, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "What is the key difference between Intent-Based and Interest-Based advertising?", answer: "Intent-Based (Google Search Ads) targets users actively seeking a solution. Interest-Based (Meta Ads) interrupts users scrolling on social media based on demographic/interest profiles." },
-  { id: 3, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Which primary tools are used for Web Analytics?", answer: "Google Analytics 4 (GA4) for user sessions/conversions and Google Search Console for search index performance and organic impressions." },
-  { id: 4, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Name 3 popular social media content scheduling tools.", answer: "Buffer, Later, Hootsuite, and Meta Business Suite." },
-  { id: 5, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Why is Digital Marketing more measurable than Traditional Marketing?", answer: "Digital marketing provides real-time tracking metrics (CTR, CPA, Conversion Rate, ROAS) allowing exact ROI calculation, unlike broad TV/billboard broadcasts." },
-  { id: 6, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "What tools should a freelance marketer use for SEO keyword research?", answer: "Ahrefs (Free tier), Ubersuggest, and Google Keyword Planner." },
+  { id: 1, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "What is Digital Marketing?", answer: "Digital marketing is the promotion of products or services using digital channels and technologies. Unlike traditional marketing, it is measurable, targeted, and interactive." },
+  { id: 2, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "What are the 6 core channels of digital marketing?", answer: "1. SEO – getting found organically on search engines\n2. Content Marketing – blogs, videos, podcasts, infographics\n3. Social Media Marketing – Instagram, LinkedIn, TikTok, Twitter/X\n4. Email Marketing – newsletters, welcome sequences, drip campaigns\n5. Paid Advertising – Google Ads, Meta Ads, LinkedIn Ads\n6. Affiliate & Influencer Marketing" },
+  { id: 3, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Which primary tools are used for Analytics?", answer: "Google Analytics 4 (GA4), Google Search Console" },
+  { id: 4, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Which essential tools are used for Graphic Design & SEO?", answer: "Design: Canva, Adobe Express, Figma\nSEO: Ahrefs Free, Ubersuggest, Google Keyword Planner" },
+  { id: 5, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "Which essential tools are used for Social Scheduling & Ads?", answer: "Social Scheduling: Buffer, Later, Hootsuite, Meta Business Suite\nAds: Meta Ads Manager, Google Ads" },
+  { id: 6, moduleId: 1, moduleCode: "M1", moduleTitle: "Intro to Digital Marketing", question: "How does Digital Marketing differ from Traditional Marketing?", answer: "Unlike traditional marketing, digital marketing is measurable, targeted, and interactive." },
 
   // Module 2 (7-12)
   { id: 7, moduleId: 2, moduleCode: "M2", moduleTitle: "Personal Branding", question: "What are the 3 Pillars of a strong personal brand?", answer: "1. Identity (Clarity - who you help & what problem you solve)\n2. Credibility (Trust - social proof & case studies)\n3. Visibility (Consistency - content output)" },
@@ -1500,10 +1372,10 @@ export const PLANNER_DATA: PlannerDay[] = Array.from({ length: 30 }, (_, index) 
 
   if (dayNum <= 4) {
     modId = 1; modCode = "M1";
-    if (dayNum === 1) { title = "What is Digital Marketing?"; study = "Study 6 core channels & traditional vs digital matrix"; practice = "Perform digital audit on 1 business"; }
-    else if (dayNum === 2) { title = "Key Marketing Tools"; study = "Study marketing tools table across Analytics, Design, SEO, Social, and Ads"; practice = "Setup free accounts on Canva and Meta Business Suite"; }
-    else if (dayNum === 3) { title = "Ad Platforms Overview"; study = "Study Search Intent vs Social Interest advertising"; practice = "Analyze 2 Google Ads and 2 IG Ads"; }
-    else { title = "Module 1 Review"; study = "Review Module 1 core principles"; practice = "Complete Flashcards 1–6 with 100% mastery"; }
+    if (dayNum === 1) { title = "What is Digital Marketing?"; study = "Study digital marketing definition, core channels & key tools"; practice = "Review the 6 core channels"; }
+    else if (dayNum === 2) { title = "Core Channels"; study = "Study SEO, Content, Social, Email, Paid Ads & Affiliate channels"; practice = "Review channel applications"; }
+    else if (dayNum === 3) { title = "Key Marketing Tools"; study = "Study Analytics, Design, SEO, Social & Ads tools"; practice = "Familiarize with tool stack"; }
+    else { title = "Module 1 Review"; study = "Review Module 1 fundamentals"; practice = "Complete knowledge check"; }
   } else if (dayNum <= 9) {
     modId = 2; modCode = "M2";
     if (dayNum === 5) { title = "3 Pillars of Personal Brand"; study = "Study Identity, Credibility & Visibility plus reference profiles"; practice = "Analyze 4 reference profile links"; }
