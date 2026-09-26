@@ -31,8 +31,8 @@ const MODULE_IMAGES: Record<number, string> = {
   3: '/assets/images/social_media_branding.jpg',
   4: '/assets/images/seo_analytics_marketing.jpg',
   5: '/assets/images/seo_analytics_marketing.jpg',
-  6: '/assets/images/digital_marketing_overview.jpg',
-  7: '/assets/images/digital_marketing_overview.jpg',
+  6: '/assets/images/wordpress_website_setup.jpg',
+  7: '/assets/images/freelancing_client_guide.jpg',
 };
 
 export default function ModuleDetailPage() {
@@ -62,9 +62,19 @@ export default function ModuleDetailPage() {
   const moduleImage = MODULE_IMAGES[module.id] || '/assets/images/digital_marketing_overview.jpg';
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 w-full animate-fade-in relative">
+    <div className="min-h-screen text-slate-900 pb-20 w-full animate-fade-in relative bg-slate-50">
+      {/* Repeating Background Image Pattern */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 mix-blend-multiply opacity-15"
+        style={{
+          backgroundImage: `url('/assets/images/digitalmarketingbackground.jpg')`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '340px auto',
+        }}
+      />
+
       {/* 1. Top Navigation Bar Header */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4 shadow-xs">
+      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center gap-4 min-w-0">
           <Link
             to="/student/courses"
@@ -112,9 +122,9 @@ export default function ModuleDetailPage() {
       </header>
 
       {/* 2. Main Content Area */}
-      <main className="w-full px-4 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto relative z-10">
+      <main className="w-full relative z-10 pb-16">
         {/* STREAM OF ALL TOPICS INSIDE THIS MODULE */}
-        <div className="space-y-12">
+        <div>
           {module.days.map((day, idx) => (
             <React.Fragment key={day.id}>
               <SubmoduleTopicSection

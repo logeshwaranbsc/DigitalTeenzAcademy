@@ -23,6 +23,7 @@ export interface ContentSection {
   calloutText?: string;
   flowSteps?: string[];
   referenceLinks?: ReferenceLink[];
+  imageUrl?: string;
 }
 
 export interface StudyDay {

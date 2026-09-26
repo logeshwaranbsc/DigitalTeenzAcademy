@@ -88,7 +88,7 @@ export const MODULES_DATA: Module[] = [
     dayRange: "Days 5–9",
     startDay: 5,
     endDay: 9,
-    description: "Position yourself as an authority in your niche. Master the 3 pillars of personal branding, establish clarity and trust, and optimize your LinkedIn and Instagram profiles.",
+    description: "Your personal brand is not what you say — it is what people feel and believe about you when you are not in the room.",
     iconName: "UserCheck",
     color: "from-purple-500 to-pink-600",
     days: [
@@ -97,253 +97,138 @@ export const MODULES_DATA: Module[] = [
         dayNumber: 5,
         moduleId: 2,
         moduleTitle: "Personal Branding",
-        title: "3 Pillars of a Strong Personal Brand",
-        summary: "Learn Identity (Clarity), Credibility (Trust), and Visibility (Consistency) with real-world reference profiles.",
+        title: "Personal Branding",
+        summary: "Your personal brand is not what you say — it is what people feel and believe about you when you are not in the room.",
         contentSections: [
           {
-            id: "m2-d5-s1",
-            title: "3 Pillars of a Strong Personal Brand",
-            type: "checklist",
-            checklist: [
-              {
-                label: "The 3 Foundational Pillars",
-                items: [
-                  "1. Identity (Clarity): Who are you? Who do you serve? What exact problem do you solve?",
-                  "2. Credibility (Trust): Social proof, testimonials, case studies, and demonstrated expertise.",
-                  "3. Visibility (Consistency): Consistently producing high-quality content across chosen platforms."
-                ]
-              }
-            ]
+            id: "m2-s1",
+            title: "Personal Branding",
+            type: "text",
+            content: "Your personal brand is not what you say — it is what people feel and believe about you when you are not in the room."
           },
           {
-            id: "m2-d5-s2",
-            title: "Reference Profiles — Identity (Clarity)",
+            id: "m2-s2",
+            title: "3 Pillars of a Strong Personal Brand",
+            type: "table",
+            table: {
+              headers: ["Pillar", "Definition", "Key Action"],
+              rows: [
+                ["1. Identity (Clarity)", "Who you are, what you stand for, what problem you solve", "Pick ONE clear skill and audience"],
+                ["2. Credibility (Trust)", "Show proof that you know your work: results, testimonials, case studies", "Share client work and insights"],
+                ["3. Visibility (Consistency)", "Show up daily and stay top of mind", "Post minimum 4–5× per week"]
+              ]
+            }
+          },
+          {
+            id: "m2-s3",
+            title: "Reference Profiles — Identity & Credibility",
             type: "reference_list",
-            content: "Study these reference profiles to see how leading creators establish absolute clarity in their identity and content positioning:",
+            content: "Study how these creators establish clear positioning around business, growth, practical insights, and authority:",
             referenceLinks: [
               {
-                id: "ref-m2-d5-1",
-                title: "Dharaneetharan Instagram Reels",
-                subtitle: "Clarity in short-form business & strategy content",
+                id: "ref-m2-1",
+                title: "Dharaneetharan",
+                subtitle: "Clear focus on business + mindset + growth content",
                 url: "https://www.instagram.com/dharaneetharan/reels/",
                 hasLink: true,
                 imageUrl: "/assets/images/referencelinkimage1.png"
               },
               {
-                id: "ref-m2-d5-2",
+                id: "ref-m2-2",
                 title: "Journey With Sudhan",
-                subtitle: "Clarity in practical career & entrepreneurship advice",
+                subtitle: "Strong identity around journey + self-growth + consistency",
                 url: "https://www.instagram.com/journey_with_sudhan/",
                 hasLink: true,
                 imageUrl: "/assets/images/referencelinkimage2.png"
-              }
-            ]
-          },
-          {
-            id: "m2-d5-s3",
-            title: "Reference Profiles — Credibility (Trust)",
-            type: "reference_list",
-            content: "Examine how these experts build trust through consistent value and authority:",
-            referenceLinks: [
+              },
               {
-                id: "ref-m2-d5-3",
+                id: "ref-m2-3",
                 title: "Sakthivel Pannerselvam",
-                subtitle: "Credibility and business growth consulting",
+                subtitle: "Shares knowledge + practical insights + authority content",
                 url: "https://www.instagram.com/sakthivelpannerselvam6/",
                 hasLink: true,
                 imageUrl: "/assets/images/referencelinkimage3.png"
               },
               {
-                id: "ref-m2-d5-4",
-                title: "Sangeetha Sabish",
-                subtitle: "Credibility in branding & marketing education",
+                id: "ref-m2-4",
+                title: "Sangeetha Sabishek",
+                subtitle: "Builds trust with consistent content + personal authority",
                 url: "https://www.instagram.com/sangeethasabishek/",
                 hasLink: true,
                 imageUrl: "/assets/images/referencelinkimage4.png"
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Reference Profile Study",
-          description: "Open the 4 reference links above and analyze their bio statements, bio CTAs, and top 3 pinned reels/posts.",
-          actionSteps: [
-            "Click each [ View Reference ↗ ] link.",
-            "Write down what makes their bio instantly clear.",
-            "Identify their target audience."
-          ]
-        },
-        referenceLinks: [
-          {
-            id: "ref-m2-d5-1",
-            title: "Dharaneetharan Instagram Reels",
-            url: "https://www.instagram.com/dharaneetharan/reels/",
-            hasLink: true,
-            imageUrl: "/assets/images/referencelinkimage1.png"
           },
           {
-            id: "ref-m2-d5-2",
-            title: "Journey With Sudhan",
-            url: "https://www.instagram.com/journey_with_sudhan/",
-            hasLink: true
-          },
-          {
-            id: "ref-m2-d5-3",
-            title: "Sakthivel Pannerselvam",
-            url: "https://www.instagram.com/sakthivelpannerselvam6/",
-            hasLink: true
-          },
-          {
-            id: "ref-m2-d5-4",
-            title: "Sangeetha Sabish",
-            url: "https://www.instagram.com/sangeethasabishek/",
-            hasLink: true
-          }
-        ]
-      },
-      {
-        id: 6,
-        dayNumber: 6,
-        moduleId: 2,
-        moduleTitle: "Personal Branding",
-        title: "Your Unique Value Proposition (UVP)",
-        summary: "Formulate your clear UVP statement using the proven positioning formula.",
-        contentSections: [
-          {
-            id: "m2-d6-s1",
-            title: "The UVP Formula",
+            id: "m2-s5",
+            title: "Your Unique Value Proposition (UVP)",
             type: "calloutText",
-            calloutText: 'Formula: "I help [TARGET AUDIENCE] achieve [RESULT] through [METHOD]"\n\nExample from the guide: "I help small business owners get more clients through short-form content."'
+            calloutText: "UVP Formula:\n\"I help [TARGET AUDIENCE] achieve [RESULT] through [METHOD]\"\n\nExample: \"I help small business owners get more clients through short-form content.\""
           },
           {
-            id: "m2-d6-s2",
+            id: "m2-s6",
             title: "Step-by-Step Personal Brand Setup",
             type: "checklist",
             checklist: [
               {
-                label: "3 Steps to Launch Your Brand",
+                label: "1. Be Clear About Your Skill",
                 items: [
-                  "1. Be clear about your skill: Pick 1 core service (e.g., SEO, Short-Form Video, Meta Ads).",
-                  "2. Choose your audience: Focus on a specific niche (e.g. real estate agents, e-commerce stores, coaches).",
-                  "3. Create content that works: Educate, show proof, and share your journey."
+                  "Pick ONE Strong Skill: Video Editing, Digital Marketing, SEO, Content Creation",
+                  "Creator Positioning: All top creators are known for a specific angle"
+                ]
+              },
+              {
+                label: "2. Choose Your Audience",
+                items: [
+                  "Service Business Examples: Video Editing (people who want to learn & clients who need video editing services), Digital Marketing (people who want to learn & businesses needing marketing services)",
+                  "Product Business Examples: Paint business (New Home builders), Pet Grooming (Pet owners)"
+                ]
+              },
+              {
+                label: "3. Create Content That Works",
+                items: [
+                  "3 Content Types: Educational (tips & value), Proof (results & case studies), Personal (journey & behind-the-scenes)",
+                  "Winning Pattern: Short reels, direct talking, hook in first 3 seconds, clear message"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Write Your UVP",
-          description: "Draft 3 variations of your Unique Value Proposition using the UVP formula.",
-          actionSteps: [
-            "Identify your primary skill.",
-            "Define your specific target audience.",
-            "Write down your final UVP in your student notes below."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 7,
-        dayNumber: 7,
-        moduleId: 2,
-        moduleTitle: "Personal Branding",
-        title: "3 Types of Content",
-        summary: "Understand Educational, Proof, and Personal content buckets for authority building.",
-        contentSections: [
+          },
           {
-            id: "m2-d7-s1",
-            title: "The 3 Content Buckets",
-            type: "table",
-            table: {
-              headers: ["Content Bucket", "Purpose", "Example Ideas"],
-              rows: [
-                ["Educational", "Demonstrates technical expertise and solves immediate problems", "'5 Canva tricks for high-converting reels', 'How to write an ad script'"],
-                ["Proof / Authority", "Builds trust and shows real client transformations", "Before vs After case studies, client review screenshots, campaign metrics"],
-                ["Personal / Relatable", "Humanizes your brand and builds deep connection", "Behind-the-scenes work setup, lessons learned from failures, personal milestones"]
-              ]
-            }
-          }
-        ],
-        practiceTask: {
-          title: "Content Bucket Brainstorming",
-          description: "Brainstorm 2 content ideas for each of the 3 buckets (6 total ideas).",
-          actionSteps: [
-            "Write 2 Educational topics.",
-            "Write 2 Proof ideas.",
-            "Write 2 Personal story ideas."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 8,
-        dayNumber: 8,
-        moduleId: 2,
-        moduleTitle: "Personal Branding",
-        title: "Profile Optimisation Checklist",
-        summary: "Optimize your LinkedIn and Instagram profiles step-by-step for lead generation.",
-        contentSections: [
-          {
-            id: "m2-d8-s1",
-            title: "LinkedIn Profile Checklist",
+            id: "m2-s7",
+            title: "Profile Optimisation Checklist",
             type: "checklist",
             checklist: [
               {
-                label: "LinkedIn Optimisation Steps",
+                label: "LinkedIn Profile Checklist",
                 items: [
-                  "Professional Headshot: High quality, clear background, smiling face",
-                  "Custom Banner: Displays your UVP statement and branding elements",
-                  "Headline: Includes UVP + primary keyword (e.g. 'Digital Marketer | Helping E-com Brands Scale')",
-                  "About Section: Hook story + problem solved + service details + call to action",
-                  "Featured Section: Highlight top posts, case studies, or lead magnets"
+                  "Professional Headshot: High quality (not a selfie)",
+                  "Custom Banner: Custom banner with niche/tagline",
+                  "Headline: Role + Who you help + Result",
+                  "About Section: UVP + story + CTA",
+                  "Featured Section: Best posts, case studies, portfolio links"
                 ]
               },
               {
                 label: "Instagram Profile Checklist",
                 items: [
-                  "Name Field: Searchable keywords (e.g. 'Alex | Digital Marketing')",
-                  "Bio: UVP + Key Achievement + Clear CTA",
-                  "CTA (Call to Action): 'Book a call 👇' or 'Download free guide'",
-                  "Link in Bio: Linktree / website booking link"
+                  "Name Field: Includes searchable keyword (e.g. 'Sarah | Marketing Coach')",
+                  "Bio: What you do + who you help + CTA with link",
+                  "Link in Bio: Linktree or Stan Store tool"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Profile Audit & Update",
-          description: "Audit your current Instagram or LinkedIn profile against the checklist above.",
-          actionSteps: [
-            "Update your profile photo and banner.",
-            "Rewrite your bio using your new UVP.",
-            "Add a clear call to action link."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 9,
-        dayNumber: 9,
-        moduleId: 2,
-        moduleTitle: "Personal Branding",
-        title: "Module 2 Review & Portfolio Launch",
-        summary: "Review personal branding principles and prepare your personal profile for client outreach.",
-        contentSections: [
+          },
           {
-            id: "m2-d9-s1",
-            title: "Module 2 Summary",
-            type: "text",
-            content: "You now have a clear identity, a defined target audience, a compelling UVP statement, and optimized profiles. This foundation will drive all your content creation efforts in Module 3."
+            id: "m2-s8",
+            title: "Final Formula & Reality Check",
+            type: "calloutText",
+            calloutText: "⚡ FINAL FORMULA:\nRight Skill + Right Audience + Right Content = STRONG PERSONAL BRAND\n\n💡 REALITY CHECK:\nIf you follow this:\n• No need to chase clients\n• Your content becomes your salesperson\n• People DM YOU"
           }
         ],
         practiceTask: {
-          title: "Flashcard Review M2",
-          description: "Complete all Module 2 flashcards (Cards 7–12) to solidify branding concepts.",
-          actionSteps: [
-            "Open Flashcards tab.",
-            "Filter by Module 2.",
-            "Mark mastered cards as 'I Know'."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -366,239 +251,165 @@ export const MODULES_DATA: Module[] = [
         dayNumber: 10,
         moduleId: 3,
         moduleTitle: "Content Creation",
-        title: "Rule of Thirds — Content Mix & Video Script Structure",
-        summary: "Balance your content calendar using the 33-33-33 rule and write winning short-form video scripts.",
+        title: "Content Creation",
+        summary: "Master short-form video creation, script structures, scroll-stopping hooks, design principles, and editing workflows.",
         contentSections: [
           {
-            id: "m3-d10-s1",
+            id: "m3-s1",
             title: "Rule of Thirds — Content Mix",
             type: "table",
             table: {
-              headers: ["Ratio", "Content Type", "Goal"],
+              headers: ["Ratio", "Content Type", "Description"],
               rows: [
-                ["33%", "Education", "Attract new followers, position authority, provide free value"],
-                ["33%", "Proof", "Build client trust, display case studies and testimonials"],
-                ["33%", "Personal", "Create emotional connection and relatable brand personality"]
+                ["33%", "Education", "Tips, strategies, how-to videos — teach something valuable"],
+                ["33%", "Proof", "Client results, case studies, before/after"],
+                ["33%", "Personal", "Your journey, behind-the-scenes, storytelling"]
               ]
-            }
+            },
+            calloutText: "This balance builds: Trust + Authority + Connection"
           },
           {
-            id: "m3-d10-s2",
+            id: "m3-s2",
             title: "Video Script Structure",
             type: "flow",
             flowSteps: [
-              "1. Hook (First 3 seconds: Grab attention immediately)",
-              "2. Problem / Relatable Situation (State pain point clearly)",
-              "3. Solution / Value (Provide actionable advice/step)",
-              "4. Proof / Example (Show case study or live demo)",
-              "5. CTA (Clear directive: Follow, Save, Comment, or DM)"
+              "1. Hook (First 3 Seconds)",
+              "2. Problem / Relatable Situation",
+              "3. Solution / Value",
+              "4. Proof / Example",
+              "5. CTA (Call To Action)"
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Write a 30-Second Reel Script",
-          description: "Write a full 30-second short-form video script using the 5-part structure.",
-          actionSteps: [
-            "Write a strong opening hook.",
-            "State a relatable problem.",
-            "Provide a 2-step solution.",
-            "End with a clear CTA in your student notes."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 11,
-        dayNumber: 11,
-        moduleId: 3,
-        moduleTitle: "Content Creation",
-        title: "5 Powerful Hook Types",
-        summary: "Master hooks that stop the scroll and dramatically boost reel retention.",
-        contentSections: [
+          },
           {
-            id: "m3-d11-s1",
-            title: "The 5 Scroll-Stopping Hook Types",
+            id: "m3-s3",
+            title: "Hook Types — First 3 Seconds",
             type: "table",
             table: {
-              headers: ["Hook Type", "Concept", "Example Template"],
+              headers: ["Hook Type", "Example"],
               rows: [
-                ["Question Hook", "Challenges user curiosity", "'Are you still making this mistake in your ads?'"],
-                ["Bold Statement Hook", "Contrarian / Surprising claim", "'SEO is NOT dead, but you are doing it wrong.'"],
-                ["Curiosity Hook", "Creates an open loop", "'The exact 3-step strategy I used to get 10k views...'"],
-                ["Pain Point Hook", "Targets immediate frustration", "'Tired of posting reels with zero client inquiries?'"],
-                ["Story Hook", "Personal narrative entry", "'3 months ago I had 0 clients. Here is what changed...'"]
+                ["Question Hook", "Are you making this mistake?"],
+                ["Bold Statement Hook", "Most people get this wrong..."],
+                ["Curiosity Hook", "This one trick changed everything..."],
+                ["Pain Point Hook", "Struggling to get clients?"],
+                ["Story Hook", "Last year I had zero clients..."]
               ]
             }
-          }
-        ],
-        practiceTask: {
-          title: "Hook Variation Writing",
-          description: "Pick 1 topic (e.g., 'Canva Tips') and write 5 different hooks using all 5 hook types.",
-          actionSteps: [
-            "Write Question Hook.",
-            "Write Bold Statement Hook.",
-            "Write Curiosity, Pain Point, and Story hooks."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 12,
-        dayNumber: 12,
-        moduleId: 3,
-        moduleTitle: "Content Creation",
-        title: "10 Video Content Formats",
-        summary: "Explore all 10 video content formats from the source guide.",
-        contentSections: [
+          },
           {
-            id: "m3-d12-s1",
+            id: "m3-s4",
             title: "10 Video Content Formats",
+            type: "table",
+            table: {
+              headers: ["Format", "Description"],
+              rows: [
+                ["1. Hook-Based Viral Videos", "Fast cuts, strong opening, keep curiosity high"],
+                ["2. Storytelling / Emotional", "Show struggle → growth → success"],
+                ["3. Hook → Solution Format", "Problem + direct solution"],
+                ["4. Authority Building Reels", "Show expertise, share insights & frameworks"],
+                ["5. Client Process Videos", "Show HOW you work step by step"],
+                ["6. Client Results / Proof Videos", "Before → After, numbers & growth"],
+                ["7. Trending / Seasonal Content", "Use trending audio + current topics"],
+                ["8. Customer Testimonial Videos", "Real client feedback in their own words"],
+                ["9. Educational Content", "Teach something simple & useful"],
+                ["10. Behind-The-Scenes Content", "Show real work, build authenticity"]
+              ]
+            }
+          },
+          {
+            id: "m3-s5",
+            title: "Algorithm Growth Tips",
             type: "checklist",
             checklist: [
               {
-                label: "All 10 Proven Video Formats",
+                label: "Algorithm Growth Tips",
                 items: [
-                  "1. Hook-Based Viral Videos: Short 7-15s clips with strong text overlay and trending audio",
-                  "2. Storytelling / Emotional: Personal journeys, overcoming obstacles, relatable lessons",
-                  "3. Hook → Solution Format: Quick tip breakdown addressing a specific technical problem",
-                  "4. Authority Building Reels: Screen-recording teardowns, expert insights, deep breakdowns",
-                  "5. Client Process Videos: Behind-the-scenes showing your actual campaign setup or workflow",
-                  "6. Client Results / Proof Videos: Dashboard metrics, revenue growth numbers, case studies",
-                  "7. Trending / Seasonal Content: Adapting viral audios/memes to your specific niche",
-                  "8. Customer Testimonial Videos: Video reviews or screenshot commentary from happy clients",
-                  "9. Educational Content: Step-by-step tutorials, tool recommendations, resource lists",
-                  "10. Behind-The-Scenes Content: A day in the life of a digital marketer/freelancer"
+                  "First 3 seconds: MOST IMPORTANT",
+                  "Keep videos short & engaging",
+                  "Use captions + subtitles",
+                  "Add pattern interrupts (cuts, zooms, text overlays)",
+                  "Post consistently: minimum 4–5 per week",
+                  "Reply to comments to boost reach",
+                  "Use the trending song",
+                  "Repost the video"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Format Selection Exercise",
-          description: "Choose 3 video formats from the 10 listed above that best fit your brand.",
-          actionSteps: [
-            "Select 3 formats.",
-            "Draft a 1-sentence content concept for each format."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 13,
-        dayNumber: 13,
-        moduleId: 3,
-        moduleTitle: "Content Creation",
-        title: "Algorithm Growth & Content Journey Flow",
-        summary: "Understand how platform algorithms process content and convert strangers into paying clients.",
-        contentSections: [
-          {
-            id: "m3-d13-s1",
-            title: "Algorithm Growth Tips",
-            type: "text",
-            content: "Algorithms prioritize watch time, completion rate, saves, and shares. Focus on high-retention hooks, concise value, and clear saveable graphics to boost organic distribution."
           },
           {
-            id: "m3-d13-s2",
+            id: "m3-s6",
             title: "Content Journey — Audience to Client",
             type: "flow",
             flowSteps: [
-              "Stranger (Discovers reel via explore page / algorithm)",
-              "Follows for value (Consistent educational content)",
-              "Builds trust (Sees client proof & authority reels)",
-              "Engages (Comments or DMs for advice)",
-              "Becomes a lead (Inquires about services)",
-              "Converts to client (Signs contract & pays retainer)"
+              "1. Stranger: Sees content",
+              "2. Follows: For value",
+              "3. Builds Trust: Engages & watches",
+              "4. Engages: Likes, comments, shares",
+              "5. Becomes a Lead: Inquires via DM",
+              "6. Converts to Client: Hires your services"
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Funnel Mapping Task",
-          description: "Map out your lead magnet or call to action that moves followers from 'Trust' to 'Lead'.",
-          actionSteps: [
-            "Define your free offer (e.g. Free Audit, PDF checklist).",
-            "Write the DM script to send interested leads."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 14,
-        dayNumber: 14,
-        moduleId: 3,
-        moduleTitle: "Content Creation",
-        title: "Design Basics for Marketers",
-        summary: "Master typography rules, color theory, and the 60-30-10 color rule.",
-        contentSections: [
-          {
-            id: "m3-d14-s1",
-            title: "Typography Rules & Colour Theory",
-            type: "table",
-            table: {
-              headers: ["Design Element", "Golden Rule", "Best Practice"],
-              rows: [
-                ["Typography", "Max 2 Font Families", "Use 1 bold font for headlines (e.g. Outfit, Montserrat) and 1 readable sans-serif for body (e.g. Inter, Roboto)"],
-                ["Hierarchy", "Size Contrast", "Headlines must be 2x larger than body text. Maintain clear line spacing (1.2 - 1.4)"],
-                ["Colour Theory", "60-30-10 Rule", "60% Dominant Background (White/Dark), 30% Secondary Brand Accent, 10% High-Contrast CTA Highlight"]
-              ]
-            }
           },
           {
-            id: "m3-d14-s2",
+            id: "m3-s7",
+            title: "Design Basics for Marketers",
+            type: "checklist",
+            checklist: [
+              {
+                label: "Typography Rules",
+                items: [
+                  "Font Limit: Use max 2 fonts — one display (headline), one body",
+                  "Font Hierarchy: Size, weight, and colour create visual flow"
+                ]
+              },
+              {
+                label: "Colour Theory",
+                items: [
+                  "Complementary Colours: (Opposite on wheel) = high contrast, energetic",
+                  "Analogous Colours: (Adjacent) = harmonious, calming",
+                  "60-30-10 Rule: 60% dominant, 30% secondary, 10% accent"
+                ]
+              }
+            ]
+          },
+          {
+            id: "m3-s8",
             title: "Canva Pro Tips",
             type: "checklist",
             checklist: [
               {
-                label: "Canva Productivity Hacks",
+                label: "Canva Pro Tips",
                 items: [
-                  "Use Brand Kit to save exact brand HEX colors and font pairs",
-                  "Use Magic Resize for multi-platform formats (Story -> Square Post -> Thumbnail)",
-                  "Use Background Remover for crisp headshot elements",
-                  "Maintain margin safety zones (keep text 10% away from edges for phone screens)"
+                  "Brand Kit: Set up a Brand Kit (logo, fonts, colours)",
+                  "Magic Resize: Use Magic Resize to repurpose across platforms",
+                  "Lock Background: Lock background layers before editing content layers"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Canva Carousel Design",
-          description: "Create a 3-slide educational carousel graphic in Canva applying the 60-30-10 rule.",
-          actionSteps: [
-            "Set slide dimensions (1080x1350).",
-            "Apply 2 font families.",
-            "Export images and save link in notes."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 15,
-        dayNumber: 15,
-        moduleId: 3,
-        moduleTitle: "Content Creation",
-        title: "CapCut Editing Workflow & Module 3 Review",
-        summary: "Learn the step-by-step CapCut editing workflow for fast, viral short-form video production.",
-        contentSections: [
+          },
           {
-            id: "m3-d15-s1",
-            title: "CapCut Short-Form Video Editing Workflow",
+            id: "m3-s9",
+            title: "CapCut Editing Workflow",
             type: "flow",
             flowSteps: [
-              "1. Import raw footage and trim silent gaps (jump-cuts for fast pacing)",
-              "2. Add Auto-Captions and highlight key keywords in yellow/green",
-              "3. Insert subtle sound effects (whoosh, pop, click) at transitions and text pops",
-              "4. Add B-roll overlays or stock clips every 3-5 seconds to maintain visual interest",
-              "5. Export in 1080p, 60fps with high bitrate"
+              "1. Import clips → trim silence → arrange order",
+              "2. Add auto-captions (edit for accuracy)",
+              "3. Add B-roll or stock footage",
+              "4. Background music at 15–20% volume",
+              "5. Add text overlays for key points",
+              "6. Colour grade with presets",
+              "7. Export at 1080p, 60fps for best quality"
             ]
+          },
+          {
+            id: "m3-s10",
+            title: "Key CapCut Features",
+            type: "calloutText",
+            calloutText: "⚡ KEY CAPCUT FEATURES:\nAuto-captions • Speed ramp • Beat sync • Background removal"
           }
         ],
         practiceTask: {
-          title: "Flashcards Review M3",
-          description: "Review all Module 3 flashcards (Cards 13–18).",
-          actionSteps: [
-            "Open Flashcards tab.",
-            "Filter by Module 3.",
-            "Test knowledge on scripts, hooks, and design rules."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -607,12 +418,12 @@ export const MODULES_DATA: Module[] = [
   {
     id: 4,
     code: "M4",
-    title: "SEO (Search Engine Optimization)",
+    title: "SEO (Search Engine Optimisation)",
     subtitle: "Crawling, Indexing, Ranking, E-E-A-T & On-Page Checklist",
     dayRange: "Days 16–19",
     startDay: 16,
     endDay: 19,
-    description: "Master search engine optimization from search engine mechanics to advanced keyword research, on-page optimization, backlink building, local SEO, and technical site health.",
+    description: "Master search engine optimization from search engine mechanics to keyword research, on-page optimization, backlink building, local SEO, and technical site health.",
     iconName: "Search",
     color: "from-emerald-500 to-teal-600",
     days: [
@@ -620,182 +431,114 @@ export const MODULES_DATA: Module[] = [
         id: 16,
         dayNumber: 16,
         moduleId: 4,
-        moduleTitle: "SEO",
-        title: "How Search Engines Work & E-E-A-T",
-        summary: "Understand the Crawling -> Indexing -> Ranking flow and Google's E-E-A-T guidelines.",
+        moduleTitle: "SEO (Search Engine Optimisation)",
+        title: "SEO (Search Engine Optimisation)",
+        summary: "Understand how search engines crawl, index, and rank content, keyword intent, on-page checklist, and technical SEO essentials.",
         contentSections: [
           {
-            id: "m4-d16-s1",
+            id: "m4-s1",
             title: "How Search Engines Work",
-            type: "flow",
-            flowSteps: [
-              "1. Crawling (Discovery): Search bots (Googlebot) scan pages across the web via links",
-              "2. Indexing (Storage): Analyzes and stores site content in Google's massive index database",
-              "3. Ranking (Serving): Algorithm orders indexed pages based on 200+ ranking signals for user queries"
-            ]
-          },
-          {
-            id: "m4-d16-s2",
-            title: "E-E-A-T Quality Framework",
             type: "table",
             table: {
-              headers: ["Pillar", "Meaning", "How to Demonstrate On-Site"],
+              headers: ["Process", "Description"],
               rows: [
-                ["Experience", "First-hand personal experience", "Real product photos, original test results, hands-on client stories"],
-                ["Expertise", "Technical knowledge and skill", "Author bios, credentials, industry certifications"],
-                ["Authoritativeness", "Industry recognition", "Mentions on news sites, external backlinks, guest posts"],
-                ["Trustworthiness", "Accuracy and security", "HTTPS SSL encryption, clear privacy policy, contact details, accurate facts"]
+                ["Crawling", "Bots discover pages by following links across the web"],
+                ["Indexing", "Pages are stored in the search engine's database"],
+                ["Ranking", "Algorithms determine which pages show for a given query"]
               ]
             }
-          }
-        ],
-        practiceTask: {
-          title: "E-E-A-T Site Audit",
-          description: "Inspect any website homepage and evaluate its E-E-A-T signals.",
-          actionSteps: [
-            "Check for author bios and credentials.",
-            "Verify SSL certificate (HTTPS).",
-            "Identify 1 trust element missing."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 17,
-        dayNumber: 17,
-        moduleId: 4,
-        moduleTitle: "SEO",
-        title: "Keyword Research & 4 Search Intent Types",
-        summary: "Identify high-value keywords and match search intent accurately.",
-        contentSections: [
+          },
           {
-            id: "m4-d17-s1",
-            title: "Keyword Types",
+            id: "m4-s2",
+            title: "E-E-A-T — Google's Quality Framework",
+            type: "calloutText",
+            calloutText: "⭐ E-E-A-T Quality Framework:\nExperience • Expertise • Authority • Trustworthiness"
+          },
+          {
+            id: "m4-s3",
+            title: "Keyword Research & Search Intent",
             type: "checklist",
             checklist: [
               {
-                label: "3 Keyword Categories",
+                label: "Types of Keywords",
                 items: [
-                  "Short-Tail (Head): High search volume, high competition (e.g., 'Digital Marketing')",
-                  "Long-Tail: Specific intent, lower volume, higher conversion (e.g., 'freelance digital marketer for dental clinics in Chennai')",
-                  "LSI Keywords (Latent Semantic Indexing): Contextual terms related to your main topic (e.g., 'campaign', 'analytics', 'conversion rate')"
+                  "Short-tail: 'SEO' — high volume, high competition",
+                  "Long-tail: 'how to do SEO for small business' — lower volume, higher intent",
+                  "LSI Keywords: semantically related terms Google expects to see"
+                ]
+              },
+              {
+                label: "4 Types of Search Intent",
+                items: [
+                  "Informational: 'what is SEO'",
+                  "Navigational: 'Ahrefs login'",
+                  "Commercial: 'best SEO tools 2024'",
+                  "Transactional: 'buy SEO course'"
                 ]
               }
             ]
           },
           {
-            id: "m4-d17-s2",
-            title: "4 Types of Search Intent",
+            id: "m4-s4",
+            title: "On-Page SEO Checklist",
             type: "table",
             table: {
-              headers: ["Intent Category", "User Goal", "Example Query", "Target Page Type"],
+              headers: ["Element", "Requirement"],
               rows: [
-                ["Informational", "Learn or understand something", "'What is SEO marketing?'", "Blog Article / Guide"],
-                ["Navigational", "Find a specific website or brand", "'Google Search Console login'", "Homepage / Login Page"],
-                ["Commercial", "Research products before buying", "'Ahrefs vs Semrush review'", "Comparison Article / Review"],
-                ["Transactional", "Ready to purchase right now", "'Buy domain hosting package'", "Product / Service Landing Page"]
-              ]
-            }
-          }
-        ],
-        practiceTask: {
-          title: "Keyword List Building",
-          description: "Use Google Keyword Planner or Ubersuggest to find 5 long-tail keywords for your niche.",
-          actionSteps: [
-            "Find 5 long-tail keywords.",
-            "Classify each keyword by Search Intent.",
-            "Record keywords in your notes."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 18,
-        dayNumber: 18,
-        moduleId: 4,
-        moduleTitle: "SEO",
-        title: "On-Page SEO Checklist & Off-Page Backlinks",
-        summary: "Master on-page html elements and link-building strategies.",
-        contentSections: [
-          {
-            id: "m4-d18-s1",
-            title: "On-Page SEO Checklist Table",
-            type: "table",
-            table: {
-              headers: ["On-Page Element", "Optimal Spec / Format", "Why It Matters"],
-              rows: [
-                ["Title Tag", "50-60 characters, includes primary keyword near front", "Primary click signal in Google SERP results"],
-                ["Meta Description", "140-160 characters, compelling offer + CTA", "Improves organic Click-Through-Rate (CTR)"],
-                ["H1 Heading", "Single H1 per page, contains main target keyword", "Tells search engines the primary page topic"],
-                ["Subheadings (H2/H3)", "Logical hierarchy containing secondary/LSI keywords", "Improves readability and featured snippet eligibility"],
-                ["URL Structure", "Short, clean, lowercase, hyphen-separated (e.g. /seo-guide)", "User-friendly and keyword-relevant"],
-                ["Image Alt Text", "Descriptive text including relevant keyword", "Accessibility and Google Image Search ranking"],
-                ["Internal Links", "2-4 contextual links to related internal articles", "Distributes page rank authority across site"]
+                ["Title Tag", "50–60 chars, primary keyword near the front"],
+                ["Meta Description", "150–160 chars, keyword + compelling reason to click"],
+                ["URL", "Short, keyword-rich, use hyphens not underscores"],
+                ["H1", "One per page, contains primary keyword"],
+                ["H2/H3", "Use secondary keywords, create scannable structure"],
+                ["Images", "Descriptive file names and alt text with keywords"],
+                ["Internal Links", "Link to 3–5 related pages with descriptive anchor text"]
               ]
             }
           },
           {
-            id: "m4-d18-s2",
-            title: "Off-Page SEO & Backlinks",
+            id: "m4-s5",
+            title: "Off-Page & Local SEO",
+            type: "checklist",
+            imageUrl: "/assets/images/local_seo_backlinks.jpg",
+            checklist: [
+              {
+                label: "Backlink Building Strategies",
+                items: [
+                  "Guest Posting: Guest posting on industry blogs",
+                  "Broken Link Building: Replace dead links with your content"
+                ]
+              },
+              {
+                label: "Local SEO",
+                items: [
+                  "Google Business Profile: Complete every field, add photos weekly, respond to all reviews",
+                  "Local Citations: List on Yelp, Yellow Pages, and local directories"
+                ]
+              }
+            ]
+          },
+          {
+            id: "m4-s6",
+            title: "Technical SEO",
             type: "checklist",
             checklist: [
               {
-                label: "Backlink Strategies",
+                label: "Technical SEO Essentials",
                 items: [
-                  "Guest Blogging: Writing articles for established industry publications",
-                  "HARO / Help a Reporter Out: Providing expert quotes for news articles",
-                  "Broken Link Building: Finding broken links on competitor sites and offering your resource",
-                  "Directory Submissions: Submitting local business details to trustworthy directories"
+                  "Schema Markup: Structured data helps Google understand your content type",
+                  "Sitemap: XML sitemap for search engine indexing",
+                  "Robots.txt: Directs search bot crawling permissions",
+                  "Google Search Console: GSC setup for indexing and search performance",
+                  "Google Analytics: GA4 setup for web traffic and user tracking"
                 ]
               }
             ]
           }
         ],
         practiceTask: {
-          title: "On-Page Metadata Writing",
-          description: "Write an optimized Title Tag, Meta Description, and H1 heading for a blog post titled '10 SEO Tips for Beginners'.",
-          actionSteps: [
-            "Write Title Tag (< 60 chars).",
-            "Write Meta Description (< 160 chars).",
-            "Write H1 Tag."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 19,
-        dayNumber: 19,
-        moduleId: 4,
-        moduleTitle: "SEO",
-        title: "Local SEO, Technical SEO & Module 4 Review",
-        summary: "Set up Google Business Profile and master Technical SEO basics.",
-        contentSections: [
-          {
-            id: "m4-d19-s1",
-            title: "Technical SEO Elements",
-            type: "checklist",
-            checklist: [
-              {
-                label: "Technical Essentials",
-                items: [
-                  "Schema Markup: Structured data (JSON-LD) helping Google understand entity details",
-                  "XML Sitemap: Comprehensive map submitted to Google Search Console for efficient crawling",
-                  "Robots.txt: Directs search bot permissions and blocks sensitive site directories",
-                  "Google Search Console (GSC): Tracks indexing issues, impressions, CTR, and search queries",
-                  "Google Analytics 4 (GA4): Tracks user sessions, conversions, bounce rates, and traffic sources"
-                ]
-              }
-            ]
-          }
-        ],
-        practiceTask: {
-          title: "Flashcards Review M4",
-          description: "Review all Module 4 flashcards (Cards 19–24).",
-          actionSteps: [
-            "Open Flashcards tab.",
-            "Filter by Module 4.",
-            "Master SEO terms."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -818,195 +561,120 @@ export const MODULES_DATA: Module[] = [
         dayNumber: 20,
         moduleId: 5,
         moduleTitle: "Paid Advertising",
-        title: "Why Paid Ads? Platforms & Campaign Architecture",
-        summary: "Understand the paid advertising landscape and Meta Ads Manager 3-level structure.",
+        title: "Why Paid Ads?",
+        summary: "Organic reach is declining. Paid ads let you reach exactly the right person, at the right time, with the right message — at scale and with measurable ROI.",
         contentSections: [
           {
-            id: "m5-d20-s1",
+            id: "m5-s1",
+            title: "Why Paid Ads?",
+            type: "text",
+            content: "Organic reach is declining. Paid ads let you reach exactly the right person, at the right time, with the right message — at scale and with measurable ROI."
+          },
+          {
+            id: "m5-s2",
             title: "Key Ad Platforms",
             type: "table",
             table: {
-              headers: ["Platform", "Best For", "Primary Ad Formats"],
+              headers: ["Platform", "Best For"],
               rows: [
-                ["Meta Ads (FB/IG)", "E-commerce, B2C, Local Businesses, Lead Gen", "Reels Video Ads, Carousel, Single Image, Lead Form Ads"],
-                ["Google Ads", "High-intent search, e-com product sales", "Search Text Ads, Shopping Ads, YouTube Video Ads, Performance Max"],
-                ["LinkedIn Ads", "High-ticket B2B, corporate SaaS, high-value consulting", "Sponsored Content, Message Ads, Dynamic Jobs Ads"],
-                ["TikTok Ads", "Gen-Z demographic, impulse e-commerce buys", "In-Feed Video Ads, Spark Ads"]
+                ["Meta Ads", "B2C, visual products, impulse buys"],
+                ["Google Ads", "High-intent buyers actively searching"],
+                ["LinkedIn Ads", "B2B and professional services"],
+                ["TikTok Ads", "Gen Z/millennial consumer products"]
               ]
             }
           },
           {
-            id: "m5-d20-s2",
-            title: "Meta Ads Manager 3-Level Campaign Structure",
-            type: "flow",
-            flowSteps: [
-              "1. Campaign Level (Choose Objective: Sales, Leads, Traffic, Awareness, Engagement)",
-              "↓",
-              "2. Ad Set Level (Choose Budget, Schedule, Audience Targeting, Placements, Optimization)",
-              "↓",
-              "3. Ad Level (Choose Ad Format, Visual Creative, Headlines, Primary Copy, CTA Link)"
-            ]
-          }
-        ],
-        practiceTask: {
-          title: "Campaign Structure Mapping",
-          description: "Map out a Meta Ad campaign for an e-commerce brand launching a new sneaker line.",
-          actionSteps: [
-            "Select Campaign Objective.",
-            "Define Ad Set targeting.",
-            "Describe 2 Ad creatives."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 21,
-        dayNumber: 21,
-        moduleId: 5,
-        moduleTitle: "Paid Advertising",
-        title: "Audience Targeting & Meta Pixel",
-        summary: "Master Saved, Custom, and Lookalike audiences plus Pixel tracking setup.",
-        contentSections: [
-          {
-            id: "m5-d21-s1",
-            title: "3 Meta Audience Types",
+            id: "m5-s3",
+            title: "Meta Ads Manager — 3-Level Campaign Structure",
             type: "table",
             table: {
-              headers: ["Audience Type", "Definition", "Data Source"],
+              headers: ["Level", "What You Set"],
               rows: [
-                ["Saved Audience", "Cold targeting based on demographics, interests, and behaviors", "Meta interest categories (e.g. 'Interested in Digital Marketing')"],
-                ["Custom Audience", "Warm targeting of people who already interacted with your brand", "Website visitors (via Pixel), Instagram engaged users, customer email list"],
-                ["Lookalike Audience (LAL)", "Cold audience resembling your best existing customers", "Algorithmic mirror of a source Custom Audience (e.g. Top 1% purchasers)"]
+                ["Campaign", "Objective: Conversions, Traffic, or Awareness"],
+                ["Ad Set", "Audience, placement, budget, and schedule"],
+                ["Ad", "Creative: image/video, copy, headline, CTA button"]
               ]
             }
           },
           {
-            id: "m5-d21-s2",
-            title: "Meta Pixel Essentials",
-            type: "calloutText",
-            calloutText: "Meta Pixel is a snippet of tracking code placed on a website. It tracks visitor actions (PageView, ViewContent, AddToCart, Purchase) to measure ad ROI and build powerful Custom Retargeting Audiences."
-          }
-        ],
-        practiceTask: {
-          title: "Audience Selection Task",
-          description: "Write down the targeting parameters for a cold campaign selling an online marketing course.",
-          actionSteps: [
-            "List 3 interest keywords for Saved Audience.",
-            "Describe how to create a 1% Lookalike audience."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 22,
-        dayNumber: 22,
-        moduleId: 5,
-        moduleTitle: "Paid Advertising",
-        title: "Ad Copywriting Formulas (AIDA & PAS)",
-        summary: "Write compelling ad copy using proven psychological frameworks.",
-        contentSections: [
-          {
-            id: "m5-d22-s1",
-            title: "AIDA vs PAS Formulas",
-            type: "table",
-            table: {
-              headers: ["Framework", "Steps", "Example Application"],
-              rows: [
-                ["AIDA", "Attention → Interest → Desire → Action", "Attention: 'Struggling to get clients?' Interest: 'Most freelancers fail because of weak positioning.' Desire: 'Our 30-day framework guarantees client inquiries.' Action: 'Click link to enroll today!'"],
-                ["PAS", "Problem → Agitate → Solution", "Problem: 'Wasting money on Meta ads with zero sales?' Agitate: 'Ad costs are rising and pixel data is incomplete.' Solution: 'Our proven full-funnel strategy lowers CPA by 40%.'"]
-              ]
-            }
-          }
-        ],
-        practiceTask: {
-          title: "Ad Copywriting Challenge",
-          description: "Write 1 Meta Ad text using AIDA formula and 1 Meta Ad text using PAS formula.",
-          actionSteps: [
-            "Draft AIDA ad copy.",
-            "Draft PAS ad copy.",
-            "Include strong headline and CTA."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 23,
-        dayNumber: 23,
-        moduleId: 5,
-        moduleTitle: "Paid Advertising",
-        title: "Key Ad Metrics & Full-Funnel Strategy",
-        summary: "Calculate CTR, CPA, ROAS, CPM and implement TOF/MOF/BOF funnels.",
-        contentSections: [
-          {
-            id: "m5-d23-s1",
-            title: "Key Ad Performance Metrics",
-            type: "table",
-            table: {
-              headers: ["Metric", "Full Name", "Formula / Benchmark", "Significance"],
-              rows: [
-                ["CTR", "Click-Through Rate", "(Clicks / Impressions) × 100 (Target > 1.5%)", "Measures ad creative hook and copy engagement"],
-                ["CPA / CPL", "Cost Per Acquisition / Lead", "Total Ad Spend / Total Conversions", "Measures cost efficiency of generating a lead/sale"],
-                ["ROAS", "Return On Ad Spend", "Total Revenue Generated / Total Ad Spend (Target > 3x)", "Measures campaign profitability"],
-                ["CPM", "Cost Per Mille (1,000 Impressions)", "(Total Spend / Total Impressions) × 1,000", "Measures cost of reaching audience"]
-              ]
-            }
-          },
-          {
-            id: "m5-d23-s2",
-            title: "Full-Funnel Advertising Strategy",
-            type: "flow",
-            flowSteps: [
-              "1. TOF (Top of Funnel - Cold): Educational video reels targeting Saved & Lookalike Audiences",
-              "↓",
-              "2. MOF (Middle of Funnel - Warm): Retargeting video viewers & IG engagers with case studies & lead magnets",
-              "↓",
-              "3. BOF (Bottom of Funnel - Hot): Retargeting website add-to-carts / lead form abandoners with discount offers & testimonials"
-            ]
-          }
-        ],
-        practiceTask: {
-          title: "ROAS Calculation Exercise",
-          description: "If an ad campaign spend is $500 and generates $2,000 in revenue with 25 purchases:",
-          actionSteps: [
-            "Calculate ROAS ($2,000 / $500 = 4.0x).",
-            "Calculate Cost Per Acquisition ($500 / 25 = $20 CPA).",
-            "Write answers in notes."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 24,
-        dayNumber: 24,
-        moduleId: 5,
-        moduleTitle: "Paid Advertising",
-        title: "Scaling Rules & Module 5 Review",
-        summary: "Learn vertical and horizontal budget scaling rules.",
-        contentSections: [
-          {
-            id: "m5-d24-s1",
-            title: "Ad Campaign Scaling Rules",
+            id: "m5-s4",
+            title: "Audience Types",
             type: "checklist",
             checklist: [
               {
-                label: "Vertical vs Horizontal Scaling",
+                label: "Targeting Audience Types",
                 items: [
-                  "Vertical Scaling: Increase budget on winning ad sets by 15-20% every 48 hours (prevents resetting learning phase)",
-                  "Horizontal Scaling: Duplicate winning ad creatives into new lookalike or broader interest ad sets",
-                  "Creative Fatigue Rule: Refresh ad visual/headline when CTR drops below 1% or frequency exceeds 3.5"
+                  "Saved Audience: Demographic + interest targeting",
+                  "Custom Audience: Email list, website visitors, video viewers",
+                  "Lookalike Audience: Meta finds people similar to your best customers (start with 1%)"
                 ]
               }
             ]
+          },
+          {
+            id: "m5-s5",
+            title: "Meta Pixel",
+            type: "calloutText",
+            calloutText: "⚡ META PIXEL:\nA code snippet placed on your website that tracks visitor actions (views, purchases, add-to-cart).\nEssential for conversion tracking and retargeting campaigns."
+          },
+          {
+            id: "m5-s6",
+            title: "Ad Creatives & Copywriting",
+            type: "checklist",
+            checklist: [
+              {
+                label: "Copywriting Formulas",
+                items: [
+                  "AIDA: Attention → Interest → Desire → Action",
+                  "PAS: Problem → Agitate → Solution"
+                ]
+              },
+              {
+                label: "Ad Copy Structure",
+                items: [
+                  "Primary Text: First 125 chars must compel without truncation",
+                  "Headline: 5 words max, bold benefit or number",
+                  "Description: Reinforce the offer, add urgency"
+                ]
+              }
+            ]
+          },
+          {
+            id: "m5-s7",
+            title: "Key Metrics to Track",
+            type: "table",
+            table: {
+              headers: ["Metric", "Benchmark", "What It Means"],
+              rows: [
+                ["CTR", "1–3%+ for cold audiences", "Click-through rate on your ad"],
+                ["CPA", "Below your target cost", "Cost per acquisition — most important metric"],
+                ["ROAS", "3x minimum", "Revenue divided by Ad Spend"],
+                ["CPM", "Lower = better", "Cost per 1,000 impressions — shows audience cost"]
+              ]
+            }
+          },
+          {
+            id: "m5-s8",
+            title: "Full-Funnel Strategy",
+            type: "flow",
+            flowSteps: [
+              "1. TOF (Top of Funnel): Awareness — broad audiences, video ads",
+              "2. MOF (Middle of Funnel): Consideration — retarget video viewers and website visitors",
+              "3. BOF (Bottom of Funnel): Conversion — retarget add-to-carts, email subscribers"
+            ]
+          },
+          {
+            id: "m5-s9",
+            title: "Scaling Rules",
+            type: "calloutText",
+            calloutText: "🚀 SCALING RULES:\n• Increase budget by max 20% every 2–3 days\n• Kill ad sets with no conversions after spending 2× your target CPA"
           }
         ],
         practiceTask: {
-          title: "Flashcards Review M5",
-          description: "Review all Module 5 flashcards (Cards 25–30).",
-          actionSteps: [
-            "Open Flashcards tab.",
-            "Filter by Module 5.",
-            "Check metrics formulas."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -1029,133 +697,98 @@ export const MODULES_DATA: Module[] = [
         dayNumber: 25,
         moduleId: 6,
         moduleTitle: "WordPress",
-        title: "Domain & Hosting Setup",
-        summary: "Step-by-step domain purchase, hosting connection, and WordPress installation.",
+        title: "WordPress Setup & Speed Optimisation",
+        summary: "Step-by-step domain purchase, hosting connection, essential plugins, page architecture, and speed optimization.",
         contentSections: [
           {
-            id: "m6-d25-s1",
-            title: "Domain & Hosting Connection Steps",
-            type: "flow",
-            flowSteps: [
-              "1. Buy a Domain (GoDaddy, Namecheap, Google Domains)",
-              "2. Buy Hosting (Hostinger, SiteGround, Bluehost)",
-              "3. Connect Domain to Hosting via Nameservers (NS1/NS2 update in registrar DNS)",
-              "4. Install WordPress via 1-Click Installer in Hosting Control Panel (cPanel / hPanel)"
-            ]
-          }
-        ],
-        practiceTask: {
-          title: "DNS & Nameserver Audit",
-          description: "Inspect how DNS nameservers point a domain to a hosting server.",
-          actionSteps: [
-            "Search for domain availability on Namecheap/Hostinger.",
-            "Write down the step to update NS records."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 26,
-        dayNumber: 26,
-        moduleId: 6,
-        moduleTitle: "WordPress",
-        title: "Essential Plugins & 5 Essential Pages",
-        summary: "Must-have WordPress plugin table and key page architecture.",
-        contentSections: [
-          {
-            id: "m6-d26-s1",
-            title: "Essential Plugins Table",
+            id: "m6-s1",
+            title: "Domain & Hosting Setup (Simple)",
             type: "table",
             table: {
-              headers: ["Plugin Category", "Recommended Plugins", "Function"],
+              headers: ["Step", "Action", "Instructions"],
               rows: [
-                ["SEO", "Rank Math SEO, Yoast SEO", "Sitemap generation, meta title/description editor, schema builder"],
-                ["Page Builder", "Elementor, Spectra, Gutenberg", "Drag-and-drop page layout design"],
-                ["Security", "Wordfence Security, Solid Security", "Firewall protection, malware scanner, brute force protection"],
-                ["Performance / Cache", "WP Rocket, LiteSpeed Cache, WP Optimize", "Caching, CSS/JS minification, database cleanup"],
-                ["Forms", "WPForms, Contact Form 7", "Lead capture forms, contact submission emails"],
-                ["Image Compression", "Smush, ShortPixel", "WebP image conversion and lossy image compression"]
+                ["1. Buy Domain & Hosting", "Domain & Server", "Buy your domain from GoDaddy or Namecheap (.com) and purchase a beginner hosting plan (Hostinger / Bluehost)."],
+                ["2. Connect DNS (Simple)", "Update Nameservers", "Go to domain provider DNS settings, replace nameservers with hosting provider's, and wait up to 24 hrs for propagation."],
+                ["3. WordPress Setup", "Install & Set URL", "Use 1-click install in hosting panel. In WordPress, go to Settings → General → add domain name in Site Address (URL)."]
               ]
             }
           },
           {
-            id: "m6-d26-s2",
-            title: "5 Essential Website Pages",
+            id: "m6-s2",
+            title: "Essential Plugins (Install Immediately)",
+            type: "table",
+            table: {
+              headers: ["Plugin", "Purpose"],
+              rows: [
+                ["Yoast SEO or Rank Math", "SEO optimisation"],
+                ["WP Rocket or W3 Total Cache", "Site speed"],
+                ["Wordfence", "Security and firewall"],
+                ["WPForms or Contact Form 7", "Contact forms"],
+                ["Smush or ShortPixel", "Image compression"],
+                ["UpdraftPlus", "Automatic backups"]
+              ]
+            }
+          },
+          {
+            id: "m6-s3",
+            title: "Building Pages & 5 Essential Pages",
             type: "checklist",
             checklist: [
               {
-                label: "Core Website Architecture",
+                label: "Page Builders",
                 items: [
-                  "1. Homepage: High-converting hero banner, value proposition, services, social proof",
-                  "2. About Page: Founder story, team credentials, mission statement",
-                  "3. Services / Products Page: Detailed service packages, pricing tables, clear CTA",
-                  "4. Contact Page: Embedded form, phone number, address, Google Map widget",
-                  "5. Blog: Informational SEO content Hub for organic keyword traffic"
+                  "Gutenberg (built-in): Block editor, improving rapidly, free",
+                  "Elementor (plugin): Drag-and-drop, most popular, powerful free version"
+                ]
+              },
+              {
+                label: "5 Essential Pages Every Site Needs",
+                items: [
+                  "Homepage: Clear UVP, social proof, CTA above the fold",
+                  "About Page: Your story, credentials, why you",
+                  "Services / Products Page: What you offer, pricing if appropriate",
+                  "Contact Page: Form + phone + location + hours",
+                  "Blog: For SEO content and thought leadership"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Homepage Sitemap Wireframe",
-          description: "Sketch or list out the 5 sections of a high-converting Homepage for your agency.",
-          actionSteps: [
-            "Hero Section (H1 + CTA button).",
-            "Services Grid.",
-            "Testimonial Slider.",
-            "About snippet.",
-            "Footer."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 27,
-        dayNumber: 27,
-        moduleId: 6,
-        moduleTitle: "WordPress",
-        title: "Core Web Vitals & Speed Optimisation Checklist",
-        summary: "Optimize site performance for LCP, INP, CLS, and page speed.",
-        contentSections: [
+          },
           {
-            id: "m6-d27-s1",
-            title: "Core Web Vitals Breakdown",
+            id: "m6-s4",
+            title: "Core Web Vitals — Google Ranking Factor",
             type: "table",
             table: {
-              headers: ["Metric", "Full Name", "Good Benchmark", "What It Measures"],
+              headers: ["Metric", "Target", "What It Measures"],
               rows: [
-                ["LCP", "Largest Contentful Paint", "< 2.5 seconds", "Perceived loading speed of main visual banner/element"],
-                ["INP", "Interaction to Next Paint", "< 200 milliseconds", "Visual responsiveness when a user clicks/taps an element"],
-                ["CLS", "Cumulative Layout Shift", "< 0.1 score", "Visual stability (elements jumping around while loading)"]
+                ["LCP (Largest Contentful Paint)", "Under 2.5 seconds", "How fast main content loads"],
+                ["INP (Interaction to Next Paint)", "Under 200ms", "Responsiveness to user interaction"],
+                ["CLS (Cumulative Layout Shift)", "Under 0.1", "Visual stability of the page"]
               ]
             }
           },
           {
-            id: "m6-d27-s2",
+            id: "m6-s5",
             title: "Speed Optimisation Checklist",
             type: "checklist",
             checklist: [
               {
-                label: "Site Speed Master List",
+                label: "Speed Optimisation Master Checklist",
                 items: [
-                  "Convert all uploaded images to next-gen WebP format",
-                  "Enable Gzip / Brotli server compression",
-                  "Minify HTML, CSS, and JavaScript files",
-                  "Implement Lazy Loading on below-the-fold images and videos",
-                  "Use Cloudflare Free CDN for global caching and DNS protection"
+                  "Lightweight Theme: Use GeneratePress, Kadence, or Astra",
+                  "Image Compression: Compress all images before upload (TinyPNG or use Smush plugin)",
+                  "Enable Caching: Use WP Rocket or LiteSpeed Cache",
+                  "Cloudflare CDN: Enable Cloudflare CDN (free tier)",
+                  "Limit Plugins: Only keep what you actively use",
+                  "Google PageSpeed: Test with Google PageSpeed Insights and fix identified issues"
                 ]
               }
             ]
           }
         ],
         practiceTask: {
-          title: "PageSpeed Insights Test",
-          description: "Run any website URL through Google PageSpeed Insights (pagespeed.web.dev).",
-          actionSteps: [
-            "Note Mobile Performance score.",
-            "Check LCP, INP, and CLS scores.",
-            "Identify top 2 speed recommendations."
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }
@@ -1178,125 +811,78 @@ export const MODULES_DATA: Module[] = [
         dayNumber: 28,
         moduleId: 7,
         moduleTitle: "Freelancing",
-        title: "Contracts, Invoicing & Scope of Work",
-        summary: "Protect your freelance business with solid contracts and clear scope boundaries.",
+        title: "Contracts, Invoicing & Portfolio",
+        summary: "Protect your freelance business with solid contracts, clear scope boundaries, client reports, and content calendars.",
         contentSections: [
           {
-            id: "m7-d28-s1",
-            title: "Scope of Work (SOW) Essentials",
+            id: "m7-s1",
+            title: "Contracts, Invoicing & Portfolio",
             type: "checklist",
             checklist: [
               {
-                label: "6 Must-Have Contract Clauses",
+                label: "Scope of Work Must Include",
                 items: [
-                  "1. Deliverables: Exact list of work (e.g., 12 Reels, 4 Blog Posts, Meta Ad management)",
-                  "2. Timeline: Project start date, submission deadlines, client approval windows",
-                  "3. Milestones: Phased payment schedules (e.g. 50% upfront deposit, 50% upon completion)",
-                  "4. Revision Rounds: Limit free edits (e.g. Maximum 2 rounds of minor revisions per asset)",
-                  "5. Payment Terms: Invoice payment window (Net 7 / Net 15 days, late fee policy)",
-                  "6. Out-of-Scope Clause: Explicit fee for additional requests ($50/hr for extra work)"
+                  "Deliverables: Exactly what you will produce",
+                  "Timeline: Timeline and milestones",
+                  "Revisions: Number of revision rounds",
+                  "Payment Terms: 50% upfront is standard",
+                  "Out-of-Scope Clause: Extra work = extra charge"
                 ]
               }
             ]
-          }
-        ],
-        practiceTask: {
-          title: "Contract Template Drafting",
-          description: "Draft an Out-of-Scope clause and Revision clause for a $500/month social media management client.",
-          actionSteps: [
-            "Write the revision policy.",
-            "Write the late payment terms.",
-            "Store in notes."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 29,
-        dayNumber: 29,
-        moduleId: 7,
-        moduleTitle: "Freelancing",
-        title: "Client Reports (Meta Ads & SEO Templates)",
-        summary: "Render clean client performance reports that justify retainer renewals.",
-        contentSections: [
+          },
           {
-            id: "m7-d29-s1",
-            title: "Meta Ads Monthly Client Report Template",
+            id: "m7-s2",
+            title: "1. Meta Ads Report",
             type: "table",
             table: {
-              headers: ["Metric", "Previous Month", "Current Month", "Change / Growth", "Client Impact"],
+              headers: ["Section", "What to Include"],
               rows: [
-                ["Total Spend", "$1,000", "$1,200", "+20%", "Scaled budget on top winning ad sets"],
-                ["Total Impressions", "120,000", "165,000", "+37.5%", "Expanded brand awareness"],
-                ["Link Clicks", "2,400", "3,800", "+58.3%", "Improved ad hook & creative CTR"],
-                ["Conversions (Leads)", "80", "140", "+75.0%", "Generated 60 additional qualified leads"],
-                ["Cost Per Lead (CPL)", "$12.50", "$8.57", "-31.4% Improvement", "Lowered cost per lead by optimizing pixel audiences"]
+                ["Campaign Overview", "Date range, total spend, impressions, reach"],
+                ["Key Metrics", "CTR, CPA, ROAS, CPM for each campaign/ad set"],
+                ["Top Performing Ads", "Creative, copy, and results of best performers"],
+                ["Audience Insights", "Demographics, placements, and device breakdown"],
+                ["Recommendations", "What to scale, pause, or test next"],
+                ["Next Steps", "Action plan for the coming period"]
               ]
             }
           },
           {
-            id: "m7-d29-s2",
-            title: "SEO Monthly Client Report Template",
+            id: "m7-s3",
+            title: "2. SEO Report",
             type: "table",
             table: {
-              headers: ["SEO Metric", "Baseline", "Current Month", "Key Drivers"],
+              headers: ["Section", "What to Include"],
               rows: [
-                ["Organic Sessions", "3,200", "5,800", "+81% increase driven by new blog posts"],
-                ["Indexed Keywords (Top 10)", "12 keywords", "28 keywords", "Published 4 targeted long-tail articles"],
-                ["Domain Authority (DA)", "18", "22", "Acquired 5 high-quality backlinks via HARO"],
-                ["Organic Lead Inquiries", "14", "31", "Added clear CTA banners to top 3 articles"]
+                ["Traffic Overview", "Organic sessions, users, bounce rate (GA4)"],
+                ["Keyword Rankings", "Top keywords, position changes, new rankings"],
+                ["Technical Issues", "Crawl errors, Core Web Vitals, broken links"],
+                ["Backlink Summary", "New links acquired, domain authority trend"],
+                ["On-Page Work Done", "Pages optimised, content updated"],
+                ["Recommendations", "Priority fixes and opportunities for next month"]
               ]
             }
-          }
-        ],
-        practiceTask: {
-          title: "Report Summary Writing",
-          description: "Write a 3-sentence executive summary email explaining the Meta Ads report above to a non-technical client.",
-          actionSteps: [
-            "Highlight the 75% increase in leads.",
-            "Highlight the 31% reduction in Cost Per Lead.",
-            "Propose budget for next month."
-          ]
-        },
-        referenceLinks: []
-      },
-      {
-        id: 30,
-        dayNumber: 30,
-        moduleId: 7,
-        moduleTitle: "Freelancing",
-        title: "Content Calendar & 30-Day Completion",
-        summary: "Master content calendar management and complete your 30-day guide certification!",
-        contentSections: [
+          },
           {
-            id: "m7-d30-s1",
-            title: "Master Content Calendar Template",
+            id: "m7-s4",
+            title: "3. Content Calendar",
             type: "table",
+            content: "Fill one calendar per month. Include: date, platform, content format (Reel/Story/Post/Blog), topic or hook, and the goal (Education/Proof/Personal).",
             table: {
               headers: ["Date", "Platform", "Format", "Topic / Hook", "Goal"],
               rows: [
-                ["Oct 01", "Instagram", "Reel (15s)", "'Stop making this SEO mistake in 2026'", "Lead Generation"],
-                ["Oct 03", "LinkedIn", "Text + Carousel", "How I lowered CPL by 31% (Case Study)", "Authority / Proof"],
-                ["Oct 05", "YouTube Short", "Screen Recording", "5 Free Canva tricks every marketer needs", "Follower Growth"],
-                ["Oct 07", "Instagram", "Single Image Post", "'Client testimonial screenshot + story'", "Trust & Conversions"]
+                ["Week 1", "Instagram", "Reel (15s)", "3 Common Mistakes & Fixes", "Education"],
+                ["Week 2", "LinkedIn", "Text + Carousel", "Client Case Study & ROI Breakdown", "Proof"],
+                ["Week 3", "TikTok / Reels", "Talking Head", "Behind the scenes of our workflow", "Personal"],
+                ["Week 4", "Blog / Newsletter", "Article", "Complete Beginner Strategy Guide", "Education"]
               ]
             }
-          },
-          {
-            id: "m7-d30-s2",
-            title: "Course Completion Certificate",
-            type: "calloutText",
-            calloutText: "🎉 Congratulations! You have completed all 30 days of the Digital Marketing Complete Study Guide! You possess practical knowledge across SEO, Personal Branding, Content Creation, Paid Ads, WordPress, and Freelancing."
           }
         ],
         practiceTask: {
-          title: "Final Graduation Portfolio Task",
-          description: "Compile your UVP, personal profile links, sample script, ad copy, and client report into your master portfolio.",
-          actionSteps: [
-            "Complete all remaining flashcards (Cards 31–42).",
-            "Mark Day 30 as Complete.",
-            "Share your achievement with Digital Teenz Academy!"
-          ]
+          title: "",
+          description: "",
+          actionSteps: []
         },
         referenceLinks: []
       }

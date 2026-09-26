@@ -15,6 +15,19 @@ interface SubmoduleTopicSectionProps {
   imageSrc?: string;
 }
 
+const SECTION_BAND_COLORS = [
+  "bg-emerald-50/70 border-b border-emerald-200/60",
+  "bg-sky-50/70 border-b border-sky-200/60",
+  "bg-purple-50/70 border-b border-purple-200/60",
+  "bg-amber-50/70 border-b border-amber-200/60",
+  "bg-rose-50/70 border-b border-rose-200/60",
+  "bg-teal-50/70 border-b border-teal-200/60",
+  "bg-indigo-50/70 border-b border-indigo-200/60",
+  "bg-orange-50/70 border-b border-orange-200/60",
+  "bg-fuchsia-50/70 border-b border-fuchsia-200/60",
+  "bg-cyan-50/70 border-b border-cyan-200/60",
+];
+
 export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
   day,
   imageSrc,
@@ -27,65 +40,78 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
   const remainingSections = day.contentSections.slice(1);
 
   return (
-    <div id={`topic-section-${day.id}`} className="w-full space-y-8 pt-1">
-      {/* 1. TOP INTRO: QUESTION & ANSWER (LEFT) & RELATED IMAGE (RIGHT) */}
-      <div className={`grid grid-cols-1 ${imageSrc ? 'lg:grid-cols-12 gap-8 items-start' : 'gap-4'}`}>
-        {/* Left Column: Title & Intro Explanation starting at the top */}
-        <div className={imageSrc ? 'lg:col-span-7 space-y-3' : 'w-full space-y-3'}>
-          <div className="min-w-0">
-            <h3 className="text-xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug">
-              {day.title}
-            </h3>
-          </div>
-
-          {introSection && (
-            <StudyContentSection
-              key={introSection.id}
-              section={introSection}
-              dayNumber={day.dayNumber}
-              defaultExpanded={true}
-              hideTitle={introSection.title.toLowerCase().trim() === day.title.toLowerCase().trim()}
-            />
-          )}
-        </div>
-
-        {/* Right Column: Related Image */}
-        {imageSrc && (
-          <div className="lg:col-span-5 space-y-3">
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100">
-              <img
-                src={imageSrc}
-                alt={day.title}
-                className="w-full h-auto max-h-[320px] object-cover object-center group-hover/img:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
-
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-blue-600 animate-pulse" />
-                  <span className="font-black text-xs">Digital Marketing Guide — {day.title}</span>
-                </div>
-                <span className="text-[10px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded-md font-black uppercase border border-blue-200/60">
-                  Visual Guide
-                </span>
+    <div id={`topic-section-${day.id}`} className="w-full">
+      {/* 1. TOP INTRO BAND: QUESTION & ANSWER (LEFT) & RELATED IMAGE (RIGHT) */}
+      <section className={`w-full py-8 lg:py-12 ${SECTION_BAND_COLORS[0]}`}>
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className={`grid grid-cols-1 ${imageSrc ? 'lg:grid-cols-12 gap-8 items-stretch' : 'gap-4'}`}>
+            {/* Left Column: Title & Intro Explanation starting at the top */}
+            <div className={imageSrc ? 'lg:col-span-7 space-y-3 flex flex-col justify-start' : 'w-full space-y-3'}>
+              <div className="min-w-0">
+                <h3 className="text-xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug">
+                  {day.title}
+                </h3>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
 
-      {/* 3. FULL-WIDTH REMAINING SECTIONS (CARDS & TABLES TO FILL THE ENTIRE SPACE) */}
-      {remainingSections.length > 0 && (
-        <div className="space-y-8 pt-2 w-full">
-          {remainingSections.map((sec) => (
-            <StudyContentSection
-              key={sec.id}
-              section={sec}
-              dayNumber={day.dayNumber}
-              defaultExpanded={true}
-            />
-          ))}
+              {introSection && (
+                <StudyContentSection
+                  key={introSection.id}
+                  section={introSection}
+                  dayNumber={day.dayNumber}
+                  defaultExpanded={true}
+                  hideTitle={introSection.title.toLowerCase().trim() === day.title.toLowerCase().trim()}
+                />
+              )}
+            </div>
+
+            {/* Right Column: Related Image matching content height */}
+            {imageSrc && (
+              <div className="lg:col-span-5 flex flex-col h-full w-full">
+                <div className="relative flex-1 min-h-[300px] h-full w-full rounded-2xl overflow-hidden border border-slate-200 shadow-md group/img bg-slate-100 flex flex-col">
+                  <img
+                    src={imageSrc}
+                    alt={day.title}
+                    className="w-full h-full flex-1 object-cover object-center group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
+
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-slate-900 text-xs font-bold backdrop-blur-md bg-white/95 p-2.5 rounded-xl border border-slate-200 shadow-2xs">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={16} className="text-blue-600 animate-pulse" />
+                      <span className="font-black text-xs">Digital Marketing Guide — {day.title}</span>
+                    </div>
+                    <span className="text-[10px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded-md font-black uppercase border border-blue-200/60">
+                      Visual Guide
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+      </section>
+
+      {/* 2. FULL-WIDTH REMAINING SECTIONS: FULL-WIDTH HORIZONTAL COLOR BANDS */}
+      {remainingSections.length > 0 && (
+        <>
+          {remainingSections.map((sec, idx) => {
+            const bandColor = SECTION_BAND_COLORS[(idx + 1) % SECTION_BAND_COLORS.length];
+            return (
+              <section
+                key={sec.id}
+                className={`w-full py-8 lg:py-12 ${bandColor}`}
+              >
+                <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                  <StudyContentSection
+                    section={sec}
+                    dayNumber={day.dayNumber}
+                    defaultExpanded={true}
+                  />
+                </div>
+              </section>
+            );
+          })}
+        </>
       )}
 
       {/* 3. PRACTICE TASK & ACTION STEPS CARDS GRID (Only if available) */}
