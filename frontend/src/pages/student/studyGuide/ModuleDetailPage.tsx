@@ -144,7 +144,7 @@ export default function ModuleDetailPage() {
       {/* 2. Main Content Area */}
       <main className="w-full px-4 lg:px-8 py-8 space-y-6 max-w-7xl mx-auto relative z-10">
         {/* Module Header Title Badge */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-2.5 text-slate-900 font-black text-xl tracking-tight">
             <BookOpen className="text-blue-600" size={24} />
             <span>{module.code}: {module.title}</span>
@@ -154,8 +154,8 @@ export default function ModuleDetailPage() {
           </span>
         </div>
 
-        {/* SINGLE UNIFIED SECTION CONTAINER */}
-        <section className="w-full bg-white border border-slate-200/90 rounded-3xl p-6 lg:p-10 shadow-lg space-y-10 relative overflow-hidden">
+        {/* SINGLE UNIFIED SECTION STREAM */}
+        <section className="w-full space-y-10">
           {/* Clean Light Module Banner Hero */}
           <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-purple-50/80 text-slate-900 rounded-2xl p-6 lg:p-7 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-6 border border-indigo-100/90">
             <div className="space-y-3 max-w-2xl">
@@ -194,8 +194,6 @@ export default function ModuleDetailPage() {
           <div className="space-y-12">
             {module.days.map((day, idx) => (
               <React.Fragment key={day.id}>
-                {idx > 0 && <div className="border-t border-slate-200/90 pt-8" />}
-
                 <SubmoduleTopicSection
                   day={day}
                   isBookmarked={isBookmarked(`topic-${day.id}`)}

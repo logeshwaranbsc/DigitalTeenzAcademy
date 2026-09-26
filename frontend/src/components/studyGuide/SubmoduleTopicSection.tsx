@@ -37,7 +37,7 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
   return (
     <div id={`topic-section-${day.id}`} className="w-full space-y-6 pt-2">
       {/* 1. TOPIC HEADER BLOCK */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div className="min-w-0">
           <h3 className="text-lg lg:text-2xl font-black text-slate-900 tracking-tight leading-snug">
             {day.title}
@@ -115,9 +115,9 @@ export const SubmoduleTopicSection: React.FC<SubmoduleTopicSectionProps> = ({
 
       {/* 5. PRACTICE TASK & ACTION STEPS CARDS GRID */}
       {day.practiceTask && (
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs space-y-5">
+        <div className="space-y-4 pt-2">
           {/* Practice Task Header */}
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-3 pb-1">
             <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-600 flex items-center justify-center font-bold shadow-2xs">
               <Target size={18} />
             </div>

@@ -5,7 +5,6 @@ import {
   Bookmark,
   BookmarkCheck,
   AlertCircle,
-  ArrowRight,
   HelpCircle,
   Sparkles,
   Search,
@@ -41,19 +40,19 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
   };
 
   return (
-    <div className="border border-slate-200/90 rounded-2xl bg-white shadow-sm overflow-hidden transition-all duration-200 hover:border-slate-400">
-      {/* Card Header */}
-      <div className="w-full px-5 py-4 bg-slate-50/80 flex items-center justify-between gap-4 border-b border-slate-100">
+    <div className="space-y-4 pt-2">
+      {/* Section Title Header */}
+      <div className="flex items-center justify-between gap-4 pb-1">
         <h4 className="text-base lg:text-lg font-black text-slate-900 tracking-tight">
           {section.title}
         </h4>
 
         <button
           onClick={() => onToggleBookmark(bookmarkItem)}
-          className={`p-2 rounded-xl text-xs font-semibold transition-all ${
+          className={`p-1.5 rounded-lg text-xs font-semibold transition-all ${
             isBookmarked
               ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
-              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
+              : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
           }`}
           title={isBookmarked ? 'Bookmarked' : 'Bookmark Section'}
         >
@@ -61,8 +60,8 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
         </button>
       </div>
 
-      {/* Card Content Body */}
-      <div className="p-5 lg:p-6 space-y-5 text-sm text-slate-800 leading-relaxed">
+      {/* Content Body */}
+      <div className="space-y-5 text-sm text-slate-800 leading-relaxed">
         {/* Text Content */}
         {section.content && (
           <div className="prose prose-slate max-w-none text-slate-700 text-sm whitespace-pre-line">
@@ -175,21 +174,63 @@ export const StudyContentSection: React.FC<StudyContentSectionProps> = ({
 
         {/* Flow Diagram */}
         {section.flowSteps && (
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 lg:p-5 my-3 text-slate-900 shadow-2xs">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-              {section.flowSteps.map((step, idx) => (
-                <React.Fragment key={idx}>
-                  <div className="flex-1 bg-white border border-slate-200 rounded-xl p-3 shadow-2xs text-center font-bold text-xs lg:text-sm text-slate-800">
-                    {step}
-                  </div>
-                  {idx < section.flowSteps!.length - 1 && (
-                    <div className="flex justify-center text-amber-600">
-                      <ArrowRight className="w-4 h-4 rotate-90 md:rotate-0" />
-                    </div>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+          <div className="space-y-4 my-3">
+            {(() => {
+              const steps = section.flowSteps.filter(
+                (s) => s.trim() !== '↓' && s.trim() !== '→' && s.trim() !== '->'
+              );
+              const count = steps.length;
+              const gridCols =
+                count <= 3
+                  ? 'grid-cols-1 md:grid-cols-3'
+                  : count === 4
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+                  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+
+              return (
+                <div className={`grid ${gridCols} gap-4`}>
+                  {steps.map((rawStep, idx) => {
+                    // Remove leading "1. ", "2. ", etc. if present
+                    const cleanStep = rawStep.replace(/^\d+[\.\)]\s*/, '').trim();
+
+                    const hasColon = cleanStep.includes(':');
+                    const parts = cleanStep.split(':');
+                    const title = hasColon ? parts[0].trim() : cleanStep;
+                    const description = hasColon ? parts.slice(1).join(':').trim() : '';
+                    const numStr = String(idx + 1).padStart(2, '0');
+
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-white border border-slate-200/90 rounded-2xl p-5 lg:p-6 shadow-2xs hover:shadow-md hover:border-slate-400 transition-all duration-300 flex flex-col justify-between space-y-4 group"
+                      >
+                        {/* Top Row: Step Tag on left, Number tag on right */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60 shadow-2xs">
+                            Step {numStr}
+                          </span>
+                          <span className="text-amber-600 font-black text-sm lg:text-base tracking-wider">
+                            {numStr}
+                          </span>
+                        </div>
+
+                        {/* Title & Description */}
+                        <div className="space-y-1.5 min-w-0">
+                          <h6 className="text-sm lg:text-base font-black text-slate-900 group-hover:text-blue-900 transition-colors leading-snug">
+                            {title}
+                          </h6>
+                          {description && (
+                            <p className="text-xs lg:text-sm text-slate-600 font-medium leading-relaxed">
+                              {description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         )}
 

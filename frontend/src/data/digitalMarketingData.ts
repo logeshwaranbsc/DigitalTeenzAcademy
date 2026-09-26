@@ -599,20 +599,6 @@ export const MODULES_DATA: Module[] = [
                 ]
               }
             ]
-          },
-          {
-            id: "m3-d12-s2",
-            title: "Format Examples Note",
-            type: "reference_list",
-            content: "Note on source example references:",
-            referenceLinks: [
-              {
-                id: "ref-m3-d12-note",
-                title: "View Example References",
-                subtitle: "Where source guide contained specific video format links, clickable buttons are available. Otherwise, links are omitted per source truth guidelines.",
-                hasLink: false
-              }
-            ]
           }
         ],
         practiceTask: {
@@ -645,15 +631,10 @@ export const MODULES_DATA: Module[] = [
             type: "flow",
             flowSteps: [
               "Stranger (Discovers reel via explore page / algorithm)",
-              "↓",
               "Follows for value (Consistent educational content)",
-              "↓",
               "Builds trust (Sees client proof & authority reels)",
-              "↓",
               "Engages (Comments or DMs for advice)",
-              "↓",
               "Becomes a lead (Inquires about services)",
-              "↓",
               "Converts to client (Signs contract & pays retainer)"
             ]
           }
