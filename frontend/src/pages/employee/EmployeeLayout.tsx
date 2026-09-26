@@ -74,10 +74,10 @@ export default function EmployeeLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen ${
+        className={`fixed inset-y-0 left-0 z-50 h-screen bg-white border-r border-slate-200 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${
           sidebarOpen
             ? 'w-64 translate-x-0 opacity-100'
-            : 'w-64 -translate-x-full lg:w-0 lg:translate-x-0 lg:opacity-0 lg:border-r-0 overflow-hidden pointer-events-none'
+            : 'w-64 -translate-x-full opacity-0 pointer-events-none'
         }`}
       >
         <div className="w-64 flex flex-col h-full flex-shrink-0">
@@ -156,7 +156,7 @@ export default function EmployeeLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarOpen ? 'lg:pl-64' : 'pl-0'}`}>
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-slate-200 px-4 py-3 lg:px-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
