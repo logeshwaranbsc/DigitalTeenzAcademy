@@ -72,8 +72,8 @@ class MarkAbsentAttendance extends Command
             $period = CarbonPeriod::create($effectiveStartDate, $endDate);
 
             foreach ($period as $date) {
-                // Skip weekends (Saturday = 6, Sunday = 0)
-                if ($date->isWeekend()) {
+                // Skip weekly holiday (Sunday = 0)
+                if ($date->isSunday()) {
                     continue;
                 }
 

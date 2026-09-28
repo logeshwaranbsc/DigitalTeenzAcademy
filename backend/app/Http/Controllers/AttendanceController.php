@@ -41,10 +41,10 @@ class AttendanceController extends Controller
         $todayRecord = $this->todayRecord($profile->id);
         $alreadyCompletedToday = !$active && $todayRecord && in_array($todayRecord->status, ['completed', 'present', 'regularised'], true);
 
-        // Check if today is a Holiday or Weekend
+        // Check if today is a Holiday or Sunday (weekly holiday)
         $todayDate = today()->toDateString();
         $todayHoliday = Holiday::whereDate('date', $todayDate)->first();
-        $isWeekend = today()->isWeekend();
+        $isWeekend = today()->isSunday();
         $isHoliday = (bool) $todayHoliday;
 
         $canCheckIn = !$isHoliday && !$isWeekend && !$active && !$alreadyCompletedToday;
@@ -89,10 +89,10 @@ class AttendanceController extends Controller
             ], 403);
         }
 
-        if (today()->isWeekend()) {
+        if (today()->isSunday()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Check-in disabled: Today is a weekend (non-working day).',
+                'message' => 'Check-in disabled: Today is Sunday (weekly holiday).',
             ], 403);
         }
 
@@ -614,7 +614,7 @@ class AttendanceController extends Controller
             $period = CarbonPeriod::create($effectiveStart, $endDate);
 
             foreach ($period as $date) {
-                if ($date->isWeekend()) {
+                if ($date->isSunday()) {
                     continue;
                 }
 

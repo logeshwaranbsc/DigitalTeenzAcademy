@@ -23,7 +23,6 @@ import {
   RotateCcw,
   Sparkles,
   X,
-  FileText,
   PlusCircle,
   History,
 } from 'lucide-react';
@@ -34,13 +33,6 @@ export default function UserAttendancePage() {
 
   // Attendance History State
   const [records, setRecords] = useState<AdminAttendanceRecord[]>([]);
-  const [stats, setStats] = useState({
-    total_records: 0,
-    completed_count: 0,
-    absent_count: 0,
-    total_minutes: 0,
-    total_hours_formatted: '0h 0min',
-  });
   const [meta, setMeta] = useState<PaginationMeta>({
     current_page: 1,
     last_page: 1,
@@ -68,7 +60,6 @@ export default function UserAttendancePage() {
     try {
       const res = await getMyAttendanceHistory({ page, per_page: 15 });
       setRecords(res.data);
-      setStats(res.stats);
       setMeta(res.meta);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to load attendance history');
@@ -110,16 +101,36 @@ export default function UserAttendancePage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
-      {/* Header Title & Regularise Button */}
+      {/* Main Content Tabs & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
-            <Clock className="w-7 h-7 text-indigo-600" />
-            My Attendance & Timesheets
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            View your attendance history, logged tasks, and submit regularisation requests
-          </p>
+        <div className="flex border border-slate-200 bg-white rounded-2xl p-1.5 shadow-sm text-sm font-semibold flex-1">
+          <button
+            onClick={() => setActiveTab('attendance')}
+            className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${
+              activeTab === 'attendance'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Attendance & Timesheet Logs
+          </button>
+          <button
+            onClick={() => setActiveTab('regularisations')}
+            className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition relative ${
+              activeTab === 'regularisations'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <History className="w-4 h-4" />
+            Regularisation Requests ({regularisations.length})
+            {pendingRegsCount > 0 && (
+              <span className="px-2 py-0.5 text-xs bg-amber-500 text-white font-bold rounded-full">
+                {pendingRegsCount} Pending
+              </span>
+            )}
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -128,9 +139,9 @@ export default function UserAttendancePage() {
               setSelectedAbsentDate(undefined);
               setRegulariseOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm rounded-xl shadow-md hover:from-indigo-700 hover:to-purple-700 transition"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm rounded-xl shadow-sm hover:from-indigo-700 hover:to-purple-700 transition cursor-pointer"
           >
-            <PlusCircle className="w-4.5 h-4.5" />
+            <PlusCircle className="w-4 h-4" />
             Regularise Attendance
           </button>
           <button
@@ -139,86 +150,12 @@ export default function UserAttendancePage() {
               fetchRegularisations();
             }}
             disabled={loading || loadingRegs}
-            className="p-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition shadow-sm"
+            className="p-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition shadow-xs cursor-pointer"
             title="Refresh data"
           >
             <RotateCcw className={`w-4 h-4 ${loading || loadingRegs ? 'animate-spin text-indigo-600' : ''}`} />
           </button>
         </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Sessions</p>
-            <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_records}</p>
-          </div>
-          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-            <FileText className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Days Attended</p>
-            <p className="text-2xl font-bold text-slate-800 mt-1">{stats.completed_count}</p>
-          </div>
-          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Hours Logged</p>
-            <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_hours_formatted}</p>
-          </div>
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-            <Clock className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Absent Days</p>
-            <p className="text-2xl font-bold text-slate-800 mt-1">{stats.absent_count}</p>
-          </div>
-          <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
-            <XCircle className="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Tabs */}
-      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-sm border text-sm font-semibold">
-        <button
-          onClick={() => setActiveTab('attendance')}
-          className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${
-            activeTab === 'attendance'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          Attendance & Timesheet Logs
-        </button>
-        <button
-          onClick={() => setActiveTab('regularisations')}
-          className={`flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 transition relative ${
-            activeTab === 'regularisations'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          <History className="w-4 h-4" />
-          Regularisation Requests ({regularisations.length})
-          {pendingRegsCount > 0 && (
-            <span className="px-2 py-0.5 text-xs bg-amber-500 text-white font-bold rounded-full">
-              {pendingRegsCount} Pending
-            </span>
-          )}
-        </button>
       </div>
 
       {activeTab === 'attendance' ? (

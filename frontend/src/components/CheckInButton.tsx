@@ -201,7 +201,7 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
   if (isWeekend) {
     return (
       <div
-        title="Check-in is not active on weekends"
+        title="Check-in is disabled on Sunday (weekly holiday)"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -218,7 +218,7 @@ export default function CheckInButton({ onCheckOut }: CheckInButtonProps) {
         }}
       >
         <Clock size={14} style={{ color: '#94a3b8', flexShrink: 0 }} />
-        <span>Weekend (Non-Working Day)</span>
+        <span>Sunday Holiday</span>
       </div>
     );
   }
