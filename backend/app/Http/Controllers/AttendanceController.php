@@ -702,7 +702,7 @@ class AttendanceController extends Controller
     {
         $profile = $request->attributes->get('auth_profile');
 
-        if (!$profile) {
+        if (!$profile instanceof Profile) {
             $authUserId = $request->attributes->get('auth_user_id');
 
             if (!$authUserId) {

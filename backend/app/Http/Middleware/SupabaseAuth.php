@@ -59,10 +59,8 @@ class SupabaseAuth
             $request->attributes->set('auth_user_id', $authUserId);
             $request->attributes->set('auth_email', $authEmail);
 
-            // Pre-load user profile into request attributes with 60s cache to eliminate DB network roundtrips on every request
-            $profile = Cache::remember("user_profile_{$authUserId}", 60, function () use ($authUserId) {
-                return Profile::where('auth_user_id', $authUserId)->first();
-            });
+            // Attach profile into request attributes
+            $profile = Profile::where('auth_user_id', $authUserId)->first();
 
             if ($profile) {
                 $request->attributes->set('auth_profile', $profile);
